@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wellness Check-In — Happy Moms</title>
+  <meta name="description" content="A short, gentle wellness check-in that reflects on your nutrition, hydration, movement, rest, emotional wellbeing, and prenatal care habits." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="nav">
+      <a href="index.html" class="brand">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#c98a93"/><path d="M32 46c-9-6-16-13-16-21a10 10 0 0 1 16-8 10 10 0 0 1 16 8c0 8-7 15-16 21z" fill="#fdf8f3"/></svg>
+        Happy Moms
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="tips.html">Healthy Habits</a>
+        <a href="quiz.html" aria-current="page">Wellness Check-In</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="quiz.html" class="btn btn-primary">Take the Check-In</a>
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-header">
+      <div class="container">
+        <span class="breadcrumb">Wellness Check-In</span>
+        <h1>A gentle check-in with yourself</h1>
+        <p>Answer six quick questions about your everyday habits. There are no wrong answers — just an honest snapshot and a few kind suggestions.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="quiz-wrap reveal">
+
+          <form id="quizForm" class="active">
+            <div class="quiz-progress">
+              <span id="quizProgressLabel">Question 1 of 6</span>
+              <div class="quiz-progress-track">
+                <div class="quiz-progress-bar" id="quizProgressBar"></div>
+              </div>
+            </div>
+
+            <div id="quizSteps"><!-- steps injected by js/quiz.js --></div>
+
+            <div class="quiz-nav">
+              <button type="button" id="quizPrev" class="btn btn-secondary" disabled>Back</button>
+              <button type="button" id="quizNext" class="btn btn-primary" disabled>Next</button>
+            </div>
+          </form>
+
+          <div class="quiz-results" id="quizResults">
+            <div class="result-score">
+              <div class="badge" id="resultBadge">0/18</div>
+              <h3 id="resultLabel">Your Result</h3>
+              <p id="resultMessage"></p>
+            </div>
+
+            <div class="result-breakdown" id="resultBreakdown"><!-- filled by js/quiz.js --></div>
+
+            <div class="disclaimer" style="margin-top:0;margin-bottom:32px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 11.5h1v5h1"/></svg>
+              <p>This check-in is for general wellness reflection only and isn't a diagnosis or medical advice. Please share any concerns with your doctor or midwife.</p>
+            </div>
+
+            <div class="quiz-restart">
+              <button type="button" id="quizRestart" class="btn btn-secondary">Retake the Check-In</button>
+              <a href="tips.html" class="btn btn-primary" style="margin-left:14px;">See Healthy Habit Tips</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#c98a93"/><path d="M32 46c-9-6-16-13-16-21a10 10 0 0 1 16-8 10 10 0 0 1 16 8c0 8-7 15-16 21z" fill="#fdf8f3"/></svg>
+            Happy Moms
+          </div>
+          <p>Gentle, evidence-informed guidance for a healthier, happier pregnancy — one habit at a time.</p>
+          <div class="social-row">
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 21v-7h3l.5-4H14V7.5c0-1.2.4-2 2.2-2H18V2.1C17.6 2 16.4 2 15 2c-3 0-5 1.8-5 5.2V10H7v4h3v7h4z" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="Pinterest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.5 19c1-3 1.5-5.5 2-8"/><path d="M8.5 11.5c0-2.5 2-4.2 4.3-4.2 2.5 0 4.2 1.6 4.2 4 0 3-1.6 5.2-4 5.2-1 0-1.8-.5-2.1-1.2"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="tips.html">Healthy Habits</a></li>
+            <li><a href="quiz.html">Wellness Check-In</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Topics</h5>
+          <ul>
+            <li><a href="tips.html#nutrition">Nourishment</a></li>
+            <li><a href="tips.html#movement">Movement</a></li>
+            <li><a href="tips.html#rest">Rest &amp; Sleep</a></li>
+            <li><a href="tips.html#mind">Emotional Wellbeing</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>A Gentle Note</h5>
+          <p style="font-size:0.88rem;color:rgba(255,255,255,0.65);">Happy Moms offers general wellness information and is not a substitute for medical advice. Always consult your healthcare provider.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; <span id="year"></span> Happy Moms. Made with care by Team 17.</span>
+        <div class="legal-links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/quiz.js"></script>
+</body>
+</html>
