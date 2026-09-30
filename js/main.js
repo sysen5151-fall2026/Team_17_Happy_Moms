@@ -1,76 +1,82 @@
-/* Happy Moms — shared site behavior */
-document.addEventListener("DOMContentLoaded", () => {
-  /* Mobile nav toggle */
-  const toggle = document.querySelector(".nav-toggle");
-  const links = document.querySelector(".nav-links");
+/* ==========================================================================
+   Happy Moms — marketing page behaviour
+   Small things the public pages need. Navigation, the footer, and the theme
+   toggle live in hm-chrome.js; the app pages have their own modules.
+   ========================================================================== */
+window.HM = window.HM || {};
 
-  if (toggle && links) {
-    toggle.addEventListener("click", () => {
-      const isOpen = links.classList.toggle("open");
-      toggle.setAttribute("aria-expanded", String(isOpen));
-    });
+HM.dom.ready(function () {
+  "use strict";
 
-    links.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        links.classList.remove("open");
-        toggle.setAttribute("aria-expanded", "false");
-      });
-    });
-  }
+  /* Fill in values from hm-config.js so contact details live in one place:
+       <a data-config-href="repoUrl" data-config-suffix="/issues">
+       <span data-config="contactEmail">                                */
+  Array.prototype.forEach.call(document.querySelectorAll("[data-config]"), function (node) {
+    var value = HM.config[node.getAttribute("data-config")];
+    if (value) node.textContent = value;
+  });
 
-  /* Scroll reveal */
-  const revealEls = document.querySelectorAll(".reveal");
+  Array.prototype.forEach.call(document.querySelectorAll("[data-config-href]"), function (node) {
+    var value = HM.config[node.getAttribute("data-config-href")];
+    if (!value) return;
+    var suffix = node.getAttribute("data-config-suffix") || "";
+    var prefix = node.getAttribute("data-config-prefix") || "";
+    node.href = prefix + value + suffix;
+  });
+
+  /* Reveal on scroll. Sections start visible and animate only as a nicety,
+     so the page still reads correctly if the observer never fires. */
+  var revealEls = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window && revealEls.length) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in-view");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15 }
-    );
-    revealEls.forEach((el) => observer.observe(el));
-  } else {
-    revealEls.forEach((el) => el.classList.add("in-view"));
-  }
-
-  /* Footer year */
-  const yearEl = document.getElementById("year");
-  if (yearEl) {
-    yearEl.textContent = new Date().getFullYear();
-  }
-
-  /* Tips page tab switching */
-  const tabButtons = document.querySelectorAll(".tab-btn");
-  const tabPanels = document.querySelectorAll(".tip-panel");
-  if (tabButtons.length && tabPanels.length) {
-    tabButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const target = btn.getAttribute("data-tab");
-
-        tabButtons.forEach((b) => b.classList.remove("active"));
-        tabPanels.forEach((p) => p.classList.remove("active"));
-
-        btn.classList.add("active");
-        const panel = document.getElementById(target);
-        if (panel) panel.classList.add("active");
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+          observer.unobserve(entry.target);
+        }
       });
-    });
+    }, { threshold: 0.12 });
+    Array.prototype.forEach.call(revealEls, function (el) { observer.observe(el); });
+  } else {
+    Array.prototype.forEach.call(revealEls, function (el) { el.classList.add("in-view"); });
   }
 
-  /* Contact form (front-end only demo) */
-  const contactForm = document.querySelector(".contact-form");
+  /* Contact form. There is no backend on GitHub Pages, so this validates and
+     confirms locally and tells the user plainly to use email instead. */
+  var contactForm = document.querySelector(".contact-form");
   if (contactForm) {
-    contactForm.addEventListener("submit", (e) => {
+    contactForm.addEventListener("submit", function (e) {
       e.preventDefault();
-      const success = document.querySelector(".form-success");
+
+      var email = document.getElementById("email");
+      var message = document.getElementById("message");
+
+      if (email && !email.value.trim()) {
+        email.focus();
+        HM.dom.toast("An email address lets us reply");
+        return;
+      }
+      if (message && !message.value.trim()) {
+        message.focus();
+        HM.dom.toast("Add a message first");
+        return;
+      }
+
+      var success = document.querySelector(".form-success");
       if (success) {
         success.classList.add("active");
         success.setAttribute("role", "status");
       }
+
+      /* Hand the text to the user's mail client so the message is not lost. */
+      var mailLink = document.getElementById("mailtoFallback");
+      if (mailLink && message) {
+        var subject = encodeURIComponent("Happy Moms feedback");
+        var body = encodeURIComponent(message.value.trim());
+        mailLink.href = "mailto:" + HM.config.contactEmail + "?subject=" + subject + "&body=" + body;
+        mailLink.hidden = false;
+      }
+
       contactForm.reset();
     });
   }

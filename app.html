@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Today — Happy Moms</title>
+  <meta name="description" content="Your pregnancy wellness dashboard: today's check-in, recent trends, and everything else in one place." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#c98a93" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <script src="js/hm-config.js"></script>
+  <script src="js/hm-core.js"></script>
+  <script src="js/hm-chrome.js"></script>
+</head>
+<body data-shell="app" data-page="app">
+
+  <header id="siteHeader"></header>
+
+  <main class="app-main">
+    <div id="appSetup" hidden></div>
+
+    <div class="app-head" id="appHeader">
+      <div><h1>Today</h1></div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="stack">
+        <section class="today-card" id="todayCard" aria-label="Today's check-in"></section>
+
+        <section aria-label="Your numbers">
+          <div class="tile-grid" id="appTiles"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>What has shifted</h2>
+            <a class="link" href="trends.html">All trends</a>
+          </div>
+          <p class="panel-sub">Descriptions of what you logged, not interpretations of what it means.</p>
+          <div class="obs-list" id="appObservations"></div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="panel" id="appTip" aria-label="Today's wellness card"></section>
+
+        <section aria-label="Everything else">
+          <div class="quick-grid" id="appQuick"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><h3>Where this goes</h3></div>
+          <p class="small muted" style="margin-bottom:14px">
+            Check-ins build the record behind your visit notes. Nothing leaves this browser
+            unless you copy, download, or print it yourself.
+          </p>
+          <a class="btn btn-quiet btn-sm" href="summary.html">Build visit notes</a>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="js/hm-content.js"></script>
+  <script src="js/hm-charts.js"></script>
+  <script src="js/hm-insights.js"></script>
+  <script src="js/hm-sample.js"></script>
+  <script src="js/hm-app.js"></script>
+</body>
+</html>

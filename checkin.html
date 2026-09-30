@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily check-in — Happy Moms</title>
+  <meta name="description" content="A few taps on mood, sleep, and symptoms. Builds the wellness record behind your OB/GYN visit notes." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#c98a93" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <script src="js/hm-config.js"></script>
+  <script src="js/hm-core.js"></script>
+  <script src="js/hm-chrome.js"></script>
+</head>
+<body data-shell="app" data-page="checkin">
+
+  <header id="siteHeader"></header>
+
+  <main class="app-main narrow">
+    <div class="app-head">
+      <div>
+        <h1>Daily check-in</h1>
+        <p>Seven quick steps. Single-answer steps move on by themselves, and you can
+           use the number keys 1 to 5 if you are on a keyboard.</p>
+      </div>
+      <div class="app-head-actions">
+        <div class="field" style="margin-bottom:0">
+          <label for="ciDate" class="tile-label" style="margin-bottom:6px">Logging for</label>
+          <input type="date" id="ciDate" style="padding:10px 14px;border:1.5px solid var(--color-border);border-radius:6px;background:var(--color-white);color:var(--color-charcoal);font-family:var(--font-body)" />
+        </div>
+      </div>
+    </div>
+
+    <p id="ciEditing" class="banner banner-info" style="margin-top:0" hidden>
+      <span>You already logged this day. Your answers are loaded, and saving will update them.</span>
+    </p>
+
+    <section class="ci-shell" id="ciShell">
+      <div id="ciForm">
+        <div class="ci-progress">
+          <span class="ci-progress-label" id="ciProgressLabel">Step 1 of 7</span>
+          <div class="ci-progress-track">
+            <div class="ci-progress-bar" id="ciBar"></div>
+          </div>
+        </div>
+
+        <div id="ciSteps"></div>
+
+        <div class="ci-nav">
+          <button type="button" class="btn btn-quiet btn-sm" id="ciBack">Back</button>
+          <div class="row">
+            <button type="button" class="ci-skip" id="ciSkip">Skip this one</button>
+            <button type="button" class="btn btn-primary" id="ciNext">Next</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ci-done" id="ciDone">
+        <div class="mark" aria-hidden="true">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2>Logged. Thank you.</h2>
+        <p id="ciDoneStreak"></p>
+        <div id="ciDoneBody"></div>
+        <div class="row">
+          <a class="btn btn-primary" href="app.html">Back to today</a>
+          <a class="btn btn-quiet" href="trends.html">See trends</a>
+          <a class="btn btn-quiet" href="puzzle.html">Play the puzzle</a>
+        </div>
+      </div>
+    </section>
+
+    <p class="small muted" style="margin-top:22px">
+      Entries are saved in this browser only. Nothing is uploaded, and no one else sees them
+      unless you share your visit notes yourself. Urgent symptoms belong with your provider:
+      see <a href="crisis.html" style="text-decoration:underline">urgent help</a>.
+    </p>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="js/hm-content.js"></script>
+  <script src="js/hm-charts.js"></script>
+  <script src="js/hm-insights.js"></script>
+  <script src="js/hm-sample.js"></script>
+  <script src="js/hm-checkin.js"></script>
+</body>
+</html>

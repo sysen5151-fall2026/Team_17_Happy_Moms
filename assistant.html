@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wellness assistant — Happy Moms</title>
+  <meta name="description" content="A guardrailed pregnancy wellness assistant: answers come from a fixed library informed by ACOG, NIH, FDA, and CDC guidance, and urgent questions route to real help." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#c98a93" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <script src="js/hm-config.js"></script>
+  <script src="js/hm-core.js"></script>
+  <script src="js/hm-chrome.js"></script>
+</head>
+<body data-shell="app" data-page="assistant">
+
+  <header id="siteHeader"></header>
+
+  <main class="app-main narrow">
+    <div class="app-head">
+      <div>
+        <h1>Wellness assistant</h1>
+        <p>Everyday pregnancy questions, answered from a fixed library the team wrote in
+           advance. Nothing is generated on the fly, so the answers cannot drift off source.</p>
+      </div>
+    </div>
+
+    <section class="chat-shell" aria-label="Assistant conversation">
+      <div class="chat-log" id="chatLog" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+      <div class="suggestions" id="chatSuggestions" aria-label="Suggested questions"></div>
+
+      <form class="composer" id="chatForm">
+        <label class="visually-hidden" for="chatInput">Ask a wellness question</label>
+        <input type="text" id="chatInput" placeholder="Ask about caffeine, sleep, food safety, travel..." autocomplete="off" />
+        <button type="submit" class="btn btn-primary btn-sm">Ask</button>
+      </form>
+    </section>
+
+    <section class="panel" style="margin-top:24px">
+      <div class="panel-head"><h2>How this is kept safe</h2></div>
+      <div class="scope-panel">
+        <div class="scope-col scope-can">
+          <h3>What it does</h3>
+          <ul>
+            <li>Answers from a library of vetted wellness topics, written in advance</li>
+            <li>Names the organization behind each answer, with a link</li>
+            <li>Screens every question for warning signs before answering anything</li>
+            <li>Saves anything it will not answer as a question for your provider</li>
+          </ul>
+        </div>
+        <div class="scope-col scope-cannot">
+          <h3>What it will not do</h3>
+          <ul>
+            <li>Diagnose, interpret your symptoms, or read your check-in data</li>
+            <li>Tell you whether a medication or supplement is safe for you</li>
+            <li>Generate new text with a language model, in this release</li>
+            <li>Replace a call to your provider about anything urgent</li>
+          </ul>
+        </div>
+      </div>
+      <p class="small muted" style="margin:18px 0 0">
+        Content is paraphrased general guidance from
+        <a href="https://www.acog.org/womens-health/pregnancy" target="_blank" rel="noopener noreferrer">ACOG</a>,
+        <a href="https://www.nichd.nih.gov/health/topics/pregnancy" target="_blank" rel="noopener noreferrer">NIH</a>,
+        <a href="https://www.fda.gov/consumers/womens-health-topics" target="_blank" rel="noopener noreferrer">FDA</a>, and
+        <a href="https://www.cdc.gov/pregnancy/" target="_blank" rel="noopener noreferrer">CDC</a>,
+        pending clinical review. A future release may use a language model to rephrase these same
+        approved sources, behind the same screening.
+      </p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Everything it covers</h2></div>
+      <p class="panel-sub">Tap any topic to read the full answer.</p>
+      <div class="topic-cloud" id="topicCloud"></div>
+    </section>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="js/hm-content.js"></script>
+  <script src="js/hm-charts.js"></script>
+  <script src="js/hm-insights.js"></script>
+  <script src="js/hm-sample.js"></script>
+  <script src="js/hm-assistant.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile and data — Happy Moms</title>
+  <meta name="description" content="Your due date, provider details, theme, and full control over your Happy Moms data: export, restore, or delete it." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#c98a93" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <script src="js/hm-config.js"></script>
+  <script src="js/hm-core.js"></script>
+  <script src="js/hm-chrome.js"></script>
+</head>
+<body data-shell="app" data-page="profile">
+
+  <header id="siteHeader"></header>
+
+  <main class="app-main narrow">
+    <div class="app-head">
+      <div>
+        <h1>Profile and data</h1>
+        <p>Your due date drives week counting, trends, and visit notes. Everything else here
+           is optional.</p>
+      </div>
+    </div>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Your pregnancy</h2></div>
+      <div id="gestationPreview" style="margin-bottom:20px"></div>
+      <div class="form-grid" id="profileForm"></div>
+      <div class="row" style="margin-top:22px">
+        <button type="button" class="btn btn-primary" id="saveProfile">Save profile</button>
+        <a class="btn btn-quiet btn-sm" href="app.html">Back to today</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Baseline wellness profile</h2></div>
+      <div id="baselineBlock"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Appearance</h2></div>
+      <p class="panel-sub">Dark works better for a 3 a.m. check-in.</p>
+      <div class="metric-switch" id="themeChoice" role="group" aria-label="Theme"></div>
+    </section>
+
+    <section class="panel" id="data">
+      <div class="panel-head"><h2>Your data</h2></div>
+      <p class="panel-sub">
+        Happy Moms has no accounts and no server. Everything you enter is stored by this
+        browser on this device, which means clearing site data or switching devices loses it
+        unless you export first.
+      </p>
+      <div class="data-list" id="dataList"></div>
+      <input type="file" id="importInput" accept="application/json,.json" class="visually-hidden"
+             aria-label="Choose a Happy Moms export file to restore" />
+    </section>
+
+    <section class="danger-zone" id="dangerZone"></section>
+
+    <section class="panel">
+      <div class="panel-head"><h3>Sharing with a support person</h3></div>
+      <p class="small muted" style="margin-bottom:12px">
+        There is no automatic sharing in this release, by design: you send what you choose.
+        Puzzle results copy to your clipboard, and visit notes copy, download, or print.
+        A partner view with its own permissions is planned, and would need accounts and a
+        server, which this deployment deliberately does without.
+      </p>
+      <a class="btn btn-quiet btn-sm" href="about.html#roadmap">See what is planned</a>
+    </section>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="js/hm-content.js"></script>
+  <script src="js/hm-charts.js"></script>
+  <script src="js/hm-insights.js"></script>
+  <script src="js/hm-sample.js"></script>
+  <script src="js/hm-profile.js"></script>
+</body>
+</html>

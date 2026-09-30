@@ -3,66 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happy Moms — A Gentle Guide to a Healthy Pregnancy</title>
-  <meta name="description" content="Happy Moms promotes a healthy pregnancy through evidence-informed tips on nutrition, movement, rest, and emotional wellbeing, plus a personal wellness check-in." />
+  <title>Happy Moms — Pregnancy Wellness Tracking and Appointment Preparation</title>
+  <meta name="description" content="Happy Moms turns quick daily check-ins into trends and a one-page summary for your OB/GYN, with a guardrailed wellness assistant and a daily puzzle to keep the habit going." />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#c98a93" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <script src="js/hm-config.js"></script>
+  <script src="js/hm-core.js"></script>
+  <script src="js/hm-chrome.js"></script>
 </head>
-<body>
+<body data-shell="site" data-page="home">
 
-  <header class="site-header">
-    <div class="nav">
-      <a href="index.html" class="brand">
-        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#c98a93"/><path d="M32 46c-9-6-16-13-16-21a10 10 0 0 1 16-8 10 10 0 0 1 16 8c0 8-7 15-16 21z" fill="#fdf8f3"/></svg>
-        Happy Moms
-      </a>
-      <nav class="nav-links" aria-label="Primary">
-        <a href="index.html" aria-current="page">Home</a>
-        <a href="about.html">About</a>
-        <a href="tips.html">Healthy Habits</a>
-        <a href="quiz.html">Wellness Check-In</a>
-        <a href="contact.html">Contact</a>
-      </nav>
-      <div class="nav-cta">
-        <a href="quiz.html" class="btn btn-primary">Take the Check-In</a>
-        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
-    </div>
-  </header>
+  <header id="siteHeader"></header>
 
   <main>
     <!-- Hero -->
     <section class="hero">
       <div class="container">
-        <div class="hero-copy reveal">
-          <span class="eyebrow">Healthy pregnancy, gently guided</span>
-          <h1>A calmer, more informed nine months starts here.</h1>
-          <p class="lede">Happy Moms brings together simple nutrition, movement, and self-care guidance with a personal wellness check-in — so you can feel confident about the choices you're making for you and your baby.</p>
+        <div class="hero-copy reveal in-view">
+          <span class="eyebrow">Pregnancy wellness, gently tracked</span>
+          <h1>Nine months of small check-ins, turned into one useful page.</h1>
+          <p class="lede">A few taps a day on mood, sleep, and how your body feels. Happy Moms
+            builds that into trends and a summary you can hand to your OB/GYN, so the weeks
+            between visits stop disappearing.</p>
           <div class="hero-actions">
-            <a href="quiz.html" class="btn btn-primary">Take the Wellness Check-In</a>
-            <a href="tips.html" class="btn btn-secondary">Browse Healthy Habits</a>
+            <a href="app.html" class="btn btn-primary">Open the app</a>
+            <a href="#how" class="btn btn-secondary">See how it works</a>
           </div>
           <div class="hero-stats">
             <div>
-              <strong>6</strong>
-              <span>Core wellness topics</span>
+              <strong>30 sec</strong>
+              <span>A daily check-in</span>
             </div>
             <div>
-              <strong>2 min</strong>
-              <span>To complete your check-in</span>
+              <strong>1 page</strong>
+              <span>For your next appointment</span>
             </div>
             <div>
-              <strong>100%</strong>
-              <span>Judgment-free guidance</span>
+              <strong>No account</strong>
+              <span>Data stays on your device</span>
             </div>
           </div>
         </div>
-        <div class="hero-art reveal">
+        <div class="hero-art reveal in-view">
           <div class="blob" aria-hidden="true"></div>
           <svg viewBox="0 0 400 400" aria-hidden="true">
             <circle cx="200" cy="210" r="130" stroke="#c98a93" stroke-width="2" opacity="0.45" fill="none"/>
@@ -79,173 +67,204 @@
       </div>
     </section>
 
-    <!-- Why Happy Moms -->
+    <!-- The problem -->
     <section class="band">
       <div class="container">
         <div class="section-head reveal">
-          <span class="eyebrow">Why Happy Moms</span>
-          <h2>Warm, practical support for every stage</h2>
-          <p>We keep things simple: clear habits you can actually stick to, and a gentle space to check in with yourself.</p>
+          <span class="eyebrow">Why we built it</span>
+          <h2>Two things go wrong between prenatal visits</h2>
+          <p>Both are well documented, and both are fixable with a lighter tool rather than a
+            bigger one.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card reveal">
+            <div class="icon">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            </div>
+            <h3>Tracking quietly stops</h3>
+            <p>In a study of 585 pregnant women using a digital health platform, only about a
+              quarter completed the requested assessments consistently, and most missed at least
+              one entirely. Logging that feels like paperwork does not survive nine months.</p>
+          </div>
+          <div class="card reveal">
+            <div class="icon gold">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5V14a2.5 2.5 0 0 1-2.5 2.5H9l-5 4z"/><path d="M12 7.5v3M12 13v.2"/></svg>
+            </div>
+            <h3>Answers come from anywhere</h3>
+            <p>Roughly 73% of pregnant women surveyed in the United States looked for health
+              information online, where accuracy is uneven and unconstrained chatbots will
+              confidently invent things. Everyday questions deserve a safer default.</p>
+          </div>
+        </div>
+        <p class="center small muted" style="margin-top:26px">
+          Brusniak et al., <em>JMIR mHealth and uHealth</em>, 2020. Hsiao et al.,
+          <em>Women &amp; Health</em>, 2023. Full citations on the
+          <a href="about.html#research" style="text-decoration:underline">about page</a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">How it works</span>
+          <h2>Three steps, then it mostly runs itself</h2>
         </div>
         <div class="grid-3">
           <div class="card reveal">
             <div class="icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c7-1 12-6 13-14-8 1-13 6-14 14z"/><path d="M6 18c2-4 5-7 9-9"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.7"/><path d="M5 20c1.4-3.6 4-5.3 7-5.3s5.6 1.7 7 5.3"/></svg>
             </div>
-            <h3>Everyday habits, explained</h3>
-            <p>Nutrition, hydration, movement, and rest — broken into small, realistic steps instead of overwhelming rules.</p>
+            <h3>1. Set your baseline</h3>
+            <p>Add your due date and answer six questions about where you are starting. That
+              becomes the reference point everything later is read against.</p>
           </div>
           <div class="card reveal">
             <div class="icon sage">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5V14a2.5 2.5 0 0 1-2.5 2.5H9l-5 4v-4.2A2.5 2.5 0 0 1 4 14V5.5z"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l4.5 4.5 10-10"/></svg>
             </div>
-            <h3>Questions worth asking</h3>
-            <p>Our Wellness Check-In asks the questions you might not think to ask yourself — then reflects back where to focus.</p>
+            <h3>2. Check in daily</h3>
+            <p>Mood, energy, sleep, nausea, water, movement, and anything else going on. Single
+              taps, about thirty seconds. The daily puzzle is the nudge that brings you back.</p>
           </div>
           <div class="card reveal">
             <div class="icon gold">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>
             </div>
-            <h3>Judgment-free, always</h3>
-            <p>Every body and every pregnancy is different. We offer information, not pressure — you know yourself best.</p>
+            <h3>3. Bring the notes</h3>
+            <p>Before an appointment, generate a one-page summary of the interval: averages,
+              what changed, recurring symptoms, and your saved questions. Copy, print, or keep it.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Feature rows -->
+    <!-- Features -->
+    <section class="band">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">What is inside</span>
+          <h2>Everything in the app today</h2>
+        </div>
+        <div class="quick-grid reveal">
+          <a class="quick-link" href="checkin.html">
+            <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l4.5 4.5 10-10"/></svg></span>
+            <span><span>Daily check-in</span><span class="qs">Seven quick taps</span></span>
+          </a>
+          <a class="quick-link" href="trends.html">
+            <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V6M4 19h16M8 16v-5M12 16V8M16 16v-7"/></svg></span>
+            <span><span>Trends</span><span class="qs">Charts and weekly averages</span></span>
+          </a>
+          <a class="quick-link" href="summary.html">
+            <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg></span>
+            <span><span>Visit notes</span><span class="qs">One page for your provider</span></span>
+          </a>
+          <a class="quick-link" href="assistant.html">
+            <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5V14a2.5 2.5 0 0 1-2.5 2.5H9l-5 4z"/></svg></span>
+            <span><span>Wellness assistant</span><span class="qs">Vetted answers only</span></span>
+          </a>
+          <a class="quick-link" href="puzzle.html">
+            <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></span>
+            <span><span>Daily puzzle</span><span class="qs">Shareable, one word a day</span></span>
+          </a>
+          <a class="quick-link" href="tips.html">
+            <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c7-1 12-6 13-14-8 1-13 6-14 14z"/><path d="M6 18c2-4 5-7 9-9"/></svg></span>
+            <span><span>Wellness tips</span><span class="qs">45 sourced cards</span></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scope: what it is not -->
     <section>
       <div class="container">
         <div class="feature-row">
-          <div class="feature-visual reveal">
-            <svg viewBox="0 0 200 200" fill="none" stroke="#b06d78" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M40 158c58-8 100-52 108-118-68 8-108 52-116 118z"/>
-              <path d="M48 148c17-34 44-58 76-72"/>
-            </svg>
-          </div>
           <div class="feature-copy reveal">
-            <span class="eyebrow">Nourish & Move</span>
-            <h2>Small, doable habits that add up</h2>
-            <p>You don't need a perfect diet or a strict workout plan — just a few grounded habits, practiced consistently, that support you and your growing baby.</p>
+            <span class="eyebrow">Where the line is</span>
+            <h2>A wellness tool, deliberately not a clinical one</h2>
+            <p>Drawing that boundary early was the point of our systems analysis. Happy Moms
+              helps you notice and remember. Interpreting what it means stays with the people
+              qualified to do it.</p>
             <ul class="feature-list">
               <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                Balanced, satisfying meals without the guesswork
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Tracks what you report and summarizes it back to you
               </li>
               <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                Gentle movement ideas that feel good, not forced
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Answers everyday questions from vetted, cited content
               </li>
               <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                Hydration reminders that fit a busy day
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Routes warning signs straight to your provider or a crisis line
               </li>
             </ul>
-            <a href="tips.html#nutrition" class="btn btn-secondary" style="margin-top:26px;">Explore Nourishment Tips</a>
+            <p style="margin-top:20px"><strong>It does not</strong> diagnose, prescribe, interpret
+              symptoms, connect to any health record, or alert anyone on your behalf.</p>
+            <a href="crisis.html" class="btn btn-secondary" style="margin-top:10px">See urgent help</a>
+          </div>
+          <div class="feature-visual reveal">
+            <svg aria-hidden="true" viewBox="0 0 200 200" fill="none" stroke="#b06d78" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M100 26l62 26v44c0 44-31 74-62 88-31-14-62-44-62-88V52z"/>
+              <path d="M74 100l18 18 36-36"/>
+            </svg>
           </div>
         </div>
 
         <div class="feature-row reverse">
-          <div class="feature-visual reveal">
-            <svg viewBox="0 0 200 200" fill="none" stroke="#74886a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M158 118A58 58 0 1 1 82 42a44 44 0 0 0 76 76z"/>
-              <circle cx="46" cy="52" r="2.5" fill="#c9a24b" stroke="none"/>
-              <circle cx="150" cy="150" r="2" fill="#c98a93" stroke="none"/>
-              <circle cx="60" cy="150" r="1.8" fill="#92a884" stroke="none"/>
-            </svg>
-          </div>
           <div class="feature-copy reveal">
-            <span class="eyebrow">Rest & Emotional Wellbeing</span>
-            <h2>Your mind deserves as much care as your body</h2>
-            <p>Pregnancy can bring big feelings alongside big changes. We share gentle ways to protect your sleep, ease anxiety, and feel supported.</p>
+            <span class="eyebrow">Your data</span>
+            <h2>Nothing leaves your device unless you send it</h2>
+            <p>There are no accounts and no server. Your check-ins live in your own browser,
+              which keeps sensitive health notes out of anyone else's hands, including ours.</p>
             <ul class="feature-list">
               <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                Wind-down routines for deeper, easier sleep
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Export everything as a file whenever you want a backup
               </li>
               <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                Simple ways to name and ease stress
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Delete all of it in one click, with nothing left behind
               </li>
               <li>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                Knowing when — and how — to ask for support
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Share a summary only by copying, printing, or downloading it yourself
               </li>
             </ul>
-            <a href="tips.html#mind" class="btn btn-secondary" style="margin-top:26px;">Explore Emotional Wellbeing Tips</a>
+            <a href="profile.html#data" class="btn btn-secondary" style="margin-top:20px">Data controls</a>
+          </div>
+          <div class="feature-visual reveal">
+            <svg aria-hidden="true" viewBox="0 0 200 200" fill="none" stroke="#74886a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="48" y="86" width="104" height="76" rx="12"/>
+              <path d="M74 86V64a26 26 0 0 1 52 0v22"/>
+              <circle cx="100" cy="120" r="9"/>
+              <path d="M100 129v12"/>
+            </svg>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Quote -->
-    <section class="band">
-      <div class="container quote-block reveal">
-        <blockquote>"You don't have to overhaul your entire life. A little more water, a short walk, an earlier bedtime — small, kind choices are still healthy choices."</blockquote>
-        <cite>— The Happy Moms Care Team</cite>
-      </div>
-    </section>
-
     <!-- CTA -->
-    <section>
+    <section class="band">
       <div class="container">
         <div class="cta-banner reveal">
-          <h2>Curious how your habits are stacking up?</h2>
-          <p>Take our free, two-minute Wellness Check-In for gentle, personalized reflections across nutrition, movement, rest, and more.</p>
+          <h2>Start with today</h2>
+          <p>One check-in is enough to begin. Add your due date, tap through seven questions,
+            and the record starts building itself.</p>
           <div class="btn-group">
-            <a href="quiz.html" class="btn btn-light">Start the Check-In</a>
-            <a href="about.html" class="btn btn-secondary" style="border-color:rgba(255,255,255,0.7);color:#fff;">Learn About Us</a>
+            <a href="app.html" class="btn btn-light">Open the app</a>
+            <a href="quiz.html" class="btn btn-secondary" style="border-color:rgba(255,255,255,0.7);color:#fff;">Take the baseline check-in</a>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <div class="footer-brand">
-            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#c98a93"/><path d="M32 46c-9-6-16-13-16-21a10 10 0 0 1 16-8 10 10 0 0 1 16 8c0 8-7 15-16 21z" fill="#fdf8f3"/></svg>
-            Happy Moms
-          </div>
-          <p>Gentle, evidence-informed guidance for a healthier, happier pregnancy — one habit at a time.</p>
-          <div class="social-row">
-            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1" fill="currentColor" stroke="none"/></svg></a>
-            <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 21v-7h3l.5-4H14V7.5c0-1.2.4-2 2.2-2H18V2.1C17.6 2 16.4 2 15 2c-3 0-5 1.8-5 5.2V10H7v4h3v7h4z" fill="currentColor" stroke="none"/></svg></a>
-            <a href="#" aria-label="Pinterest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9.5 19c1-3 1.5-5.5 2-8"/><path d="M8.5 11.5c0-2.5 2-4.2 4.3-4.2 2.5 0 4.2 1.6 4.2 4 0 3-1.6 5.2-4 5.2-1 0-1.8-.5-2.1-1.2"/></svg></a>
-          </div>
-        </div>
-        <div class="footer-col">
-          <h5>Explore</h5>
-          <ul>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="tips.html">Healthy Habits</a></li>
-            <li><a href="quiz.html">Wellness Check-In</a></li>
-            <li><a href="contact.html">Contact</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h5>Topics</h5>
-          <ul>
-            <li><a href="tips.html#nutrition">Nourishment</a></li>
-            <li><a href="tips.html#movement">Movement</a></li>
-            <li><a href="tips.html#rest">Rest &amp; Sleep</a></li>
-            <li><a href="tips.html#mind">Emotional Wellbeing</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h5>A Gentle Note</h5>
-          <p style="font-size:0.88rem;color:rgba(255,255,255,0.65);">Happy Moms offers general wellness information and is not a substitute for medical advice. Always consult your healthcare provider.</p>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <span>&copy; <span id="year"></span> Happy Moms. Made with care by Team 17.</span>
-        <div class="legal-links"><a href="#">Privacy</a><a href="#">Terms</a></div>
-      </div>
-    </div>
-  </footer>
+  <footer id="siteFooter"></footer>
 
+  <script src="js/hm-content.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

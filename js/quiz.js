@@ -240,6 +240,25 @@ const RESULT_BANDS = [
       breakdown.appendChild(item);
     });
 
+    /* Persist as the baseline wellness profile. The mission analysis treats
+       this as the reference point that later trends are read against. */
+    if (window.HM && HM.store) {
+      const byId = {};
+      QUIZ_QUESTIONS.forEach((q, i) => { byId[q.id] = answers[i]; });
+
+      HM.store.update((state) => {
+        state.profile.baseline = {
+          takenOn: HM.dates.todayKey(),
+          total: total,
+          label: band.label,
+          answers: byId
+        };
+      });
+
+      const saved = document.getElementById("baselineSaved");
+      if (saved) saved.hidden = false;
+    }
+
     quizForm.classList.remove("active");
     quizForm.style.display = "none";
     resultsEl.classList.add("active");

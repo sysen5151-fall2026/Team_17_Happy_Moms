@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily puzzle — Happy Moms</title>
+  <meta name="description" content="A five-letter pregnancy wellness word puzzle. One word a day, shareable with your support network." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#c98a93" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <script src="js/hm-config.js"></script>
+  <script src="js/hm-core.js"></script>
+  <script src="js/hm-chrome.js"></script>
+</head>
+<body data-shell="app" data-page="puzzle">
+
+  <header id="siteHeader"></header>
+
+  <main class="app-main narrow">
+    <div class="app-head">
+      <div>
+        <h1>Daily puzzle</h1>
+        <p>Five letters, six guesses, one pregnancy-themed word a day. Solving it reveals a
+           small note worth knowing, and the result is shareable.</p>
+      </div>
+    </div>
+
+    <section class="pz-shell" aria-label="Word puzzle">
+      <p class="pz-status" id="pzStatus" role="status" aria-live="polite">Six guesses. Green is right, gold is the wrong spot.</p>
+
+      <div id="pzBoard" class="pz-board" aria-label="Guess grid"></div>
+      <div id="pzKeyboard" class="pz-keyboard" aria-label="Keyboard"></div>
+
+      <div id="pzResult" class="pz-result" hidden></div>
+    </section>
+
+    <section class="panel" style="margin-top:28px">
+      <div class="panel-head"><h2>Why a word game</h2></div>
+      <p class="small muted" style="margin-bottom:0">
+        Research behind this project found that digital pregnancy tracking falls off sharply
+        over nine months, with only about a quarter of participants completing assessments
+        consistently. A daily habit worth returning to is what keeps the wellness record
+        complete enough to be useful at an appointment. Play the puzzle, then take
+        <a href="checkin.html" style="text-decoration:underline">30 seconds for the check-in</a>.
+      </p>
+    </section>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="js/hm-content.js"></script>
+  <script src="js/hm-charts.js"></script>
+  <script src="js/hm-insights.js"></script>
+  <script src="js/hm-sample.js"></script>
+  <script src="js/hm-puzzle.js"></script>
+</body>
+</html>

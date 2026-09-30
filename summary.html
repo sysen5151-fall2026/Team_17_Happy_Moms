@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visit notes — Happy Moms</title>
+  <meta name="description" content="Turn your check-ins into a one-page, patient-reported summary you can bring to a prenatal appointment." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#c98a93" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <script src="js/hm-config.js"></script>
+  <script src="js/hm-core.js"></script>
+  <script src="js/hm-chrome.js"></script>
+</head>
+<body data-shell="app" data-page="summary">
+
+  <header id="siteHeader"></header>
+
+  <main class="app-main">
+    <div class="app-head no-print">
+      <div>
+        <h1>Notes for my provider</h1>
+        <p>A one-page account of the interval since your last visit, in your words and your
+           numbers. You decide whether to share it: nothing is sent anywhere on its own.</p>
+      </div>
+    </div>
+
+    <section class="panel-flat no-print" aria-label="Summary range">
+      <div class="panel-head">
+        <h2 style="font-size:1.05rem">Interval</h2>
+      </div>
+      <div class="range-row metric-switch" id="rangeSwitch" role="group" aria-label="Choose an interval"></div>
+      <p class="small muted" style="margin-top:12px">
+        Set your last visit date in <a href="profile.html" style="text-decoration:underline">your profile</a>
+        to make the first option exact.
+      </p>
+    </section>
+
+    <div id="summaryEmpty" class="no-print" hidden></div>
+
+    <div id="summaryBody">
+      <div class="sheet-actions no-print">
+        <button type="button" class="btn btn-primary btn-sm" id="copyBtn">Copy as text</button>
+        <button type="button" class="btn btn-quiet btn-sm" id="downloadBtn">Download .txt</button>
+        <button type="button" class="btn btn-quiet btn-sm" id="printBtn">Print or save as PDF</button>
+        <button type="button" class="btn btn-quiet btn-sm" id="shareBtn" hidden>Share</button>
+      </div>
+
+      <section class="sheet print-sheet" id="sheet" aria-label="Visit notes"></section>
+    </div>
+
+    <section class="panel no-print" style="margin-top:24px">
+      <div class="panel-head">
+        <h2>Questions I want to ask</h2>
+      </div>
+      <p class="panel-sub">Add them the moment they occur to you. They appear in the notes above,
+         and you can tick them off during the appointment.</p>
+
+      <div class="question-list" id="questionList"></div>
+
+      <form class="add-row" id="addQuestionForm">
+        <label class="visually-hidden" for="questionInput">New question for your provider</label>
+        <input type="text" id="questionInput" placeholder="Is the back pain I keep logging normal?" />
+        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+      </form>
+    </section>
+
+    <p class="small muted no-print" style="margin-top:22px">
+      This page is self-reported wellness information, not a medical record, and it is not
+      reviewed by a clinician. Happy Moms does not connect to any electronic health record.
+    </p>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="js/hm-content.js"></script>
+  <script src="js/hm-charts.js"></script>
+  <script src="js/hm-insights.js"></script>
+  <script src="js/hm-sample.js"></script>
+  <script src="js/hm-summary.js"></script>
+</body>
+</html>

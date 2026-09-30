@@ -1,0 +1,14 @@
+{
+  "name": "happy-moms",
+  "version": "0.4.0",
+  "private": true,
+  "description": "Pregnancy wellness tracking and appointment preparation. Static site, no build step.",
+  "scripts": {
+    "test": "node tests/run.js",
+    "test:quiet": "node tests/run.js --quiet",
+    "serve": "python -m http.server 8000"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  }
+}

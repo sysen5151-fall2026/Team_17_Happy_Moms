@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trends — Happy Moms</title>
+  <meta name="description" content="Charts, weekly averages, and plain observations built from your pregnancy wellness check-ins." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#c98a93" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/app.css" />
+  <script src="js/hm-config.js"></script>
+  <script src="js/hm-core.js"></script>
+  <script src="js/hm-chrome.js"></script>
+</head>
+<body data-shell="app" data-page="trends">
+
+  <header id="siteHeader"></header>
+
+  <main class="app-main">
+    <div class="app-head">
+      <div>
+        <h1>Trends</h1>
+        <p>What your check-ins add up to over time. Everything here describes what you
+           logged. None of it is a diagnosis or an interpretation of your health.</p>
+      </div>
+      <div class="app-head-actions">
+        <a class="btn btn-primary btn-sm" href="summary.html">Build visit notes</a>
+      </div>
+    </div>
+
+    <div id="trendEmpty" hidden></div>
+
+    <div id="trendBody">
+      <section aria-label="Engagement measures">
+        <div class="dash-grid" id="trendTiles" style="margin-bottom:22px"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Day by day</h2>
+          <div class="metric-switch" id="rangeSwitch" role="group" aria-label="Time range"></div>
+        </div>
+        <div class="metric-switch" id="metricSwitch" role="group" aria-label="Choose a measure"></div>
+        <div class="chart-frame" id="trendChart"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Symptoms logged</h2></div>
+        <div id="symptomChart"></div>
+      </section>
+
+      <section class="panel" id="urgentHistory" hidden></section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Observations</h2></div>
+        <p class="panel-sub">These same lines appear in your visit notes, so an appointment
+           starts from something concrete instead of trying to remember three weeks.</p>
+        <div class="obs-list" id="trendObservations"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2>Week by week</h2></div>
+        <p class="panel-sub">Averages per pregnancy week, most recent first. Dashes mean nothing
+           was logged for that measure.</p>
+        <div id="weekTable"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="js/hm-content.js"></script>
+  <script src="js/hm-charts.js"></script>
+  <script src="js/hm-insights.js"></script>
+  <script src="js/hm-sample.js"></script>
+  <script src="js/hm-trends.js"></script>
+</body>
+</html>
