@@ -33,7 +33,7 @@ window.HM = window.HM || {};
       puzzle: {},             // { "YYYY-MM-DD": { word, guesses, status } }
       favorites: [],          // saved tip ids
       assistant: [],          // [{ query, entryId, at }]
-      settings: { theme: "auto", sampleData: false }
+      settings: { theme: "light", sampleData: false }
     };
   }
 

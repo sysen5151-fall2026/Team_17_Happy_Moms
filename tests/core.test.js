@@ -60,7 +60,7 @@ module.exports = function (HM, t) {
     checkins: { "2026-09-01": { mood: 4 } }
   });
   t.equal("migration keeps the due date", migrated.profile.dueDate, "2027-01-01");
-  t.equal("migration fills in new settings", migrated.settings.theme, "auto");
+  t.equal("migration fills in new settings", migrated.settings.theme, "light");
   t.equal("migration keeps check-ins", Object.keys(migrated.checkins).length, 1);
   t.check("migration adds missing collections", Array.isArray(migrated.questions) && Array.isArray(migrated.favorites));
   t.check("migration adds the lastVisit field", "lastVisit" in migrated.profile);

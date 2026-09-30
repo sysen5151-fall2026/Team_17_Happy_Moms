@@ -45,6 +45,10 @@
 
   /* Spacing / layout */
   --max-width: 1160px;
+  /* The header runs wider than body copy: nav items should reach toward the
+     edges of a large display rather than bunching into a centred column, while
+     prose stays at a comfortable measure. */
+  --nav-max-width: 1560px;
   --radius-sm: 6px;
   --radius-md: 14px;
   --radius-lg: 28px;
@@ -55,10 +59,15 @@
 
 /* ---------- Dark theme -----------------------------------------------------
    Values only. Every rule below this block reads the tokens above, so the two
-   themes stay in step. The media query is guarded so an explicit light choice
-   still wins on a dark operating system. */
+   themes stay in step.
+
+   Light is the default: the tokens above apply unless the page opts in to dark.
+   The media query below is scoped to data-theme="auto", which is only set when
+   the reader picks "Match my device" in their profile. A dark operating system
+   on its own no longer flips the site, so the palette stays predictable even
+   before scripts run. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root[data-theme="auto"] {
     --color-cream: #1b1714;
     --color-cream-deep: #241e1a;
     --color-blush: #3b2b2d;
@@ -129,7 +138,12 @@
   --shadow-card: 0 12px 30px -18px rgba(0, 0, 0, 0.6);
 }
 
-:root { color-scheme: light dark; }
+/* Native controls have to be told which palette they are painting into.
+   Leaving this as "light dark" let a dark OS paint dark form widgets onto the
+   light page, which is what made inputs unreadable in light mode. */
+:root { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+:root[data-theme="auto"] { color-scheme: light dark; }
 
 /* ---------- Reset ---------- */
 *,
@@ -155,6 +169,29 @@ body {
 img {
   max-width: 100%;
   display: block;
+}
+
+/* Form controls do not inherit colour from the page, so the baseline is set
+   once here. Without it they fall back to the browser's own default, which
+   follows the operating system rather than the chosen theme and could land
+   light text on a light field. */
+input,
+select,
+textarea {
+  color: var(--color-charcoal);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-charcoal-soft);
+  opacity: 1;      /* Firefox dims placeholders by default; ours is already soft. */
+}
+
+/* An open <select> renders its list with browser-painted colours, so both the
+   text and the surface behind it are spelled out. */
+select option {
+  color: var(--color-charcoal);
+  background: var(--color-white);
 }
 
 a {
@@ -280,9 +317,11 @@ section {
 .nav {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 20px 32px;
-  max-width: var(--max-width);
+  gap: clamp(18px, 3vw, 52px);
+  /* Vertical padding is deliberately unchanged: the mobile menu panel below is
+     positioned against the resulting header height. */
+  padding: 20px clamp(24px, 3.5vw, 60px);
+  max-width: var(--nav-max-width);
   margin: 0 auto;
 }
 
@@ -290,6 +329,7 @@ section {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
   font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 600;
@@ -305,12 +345,15 @@ section {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 36px;
+  justify-content: center;
+  flex: 1 1 auto;
+  gap: clamp(18px, 2.4vw, 44px);
 }
 
 .nav-links a {
   font-size: 0.95rem;
   font-weight: 500;
+  white-space: nowrap;
   color: var(--color-charcoal-soft);
   position: relative;
   padding: 4px 0;
@@ -336,7 +379,9 @@ section {
 .nav-cta {
   display: flex;
   align-items: center;
-  gap: 18px;
+  flex-shrink: 0;
+  margin-left: auto;
+  gap: clamp(12px, 1.2vw, 20px);
 }
 
 .nav-toggle {
@@ -1181,21 +1226,61 @@ form.contact-form {
   }
 }
 
-@media (max-width: 760px) {
-  section {
-    padding: 64px 0;
-  }
-
-  .nav-links {
-    position: fixed;
-    top: 76px;
+/* The app shell carries eight links to the site shell's four, and measuring the
+   rendered header puts its limit at 1280px against roughly 900px for the site.
+   So the app shell folds into the drop-down menu first; the 760px block below
+   repeats these panel styles for every shell at phone widths. Both blocks must
+   stay in step. */
+@media (max-width: 1279px) {
+  body[data-shell="app"] .nav-links {
+    position: absolute;
+    top: 100%;
     left: 0;
     right: 0;
     background: var(--color-cream);
     flex-direction: column;
     align-items: flex-start;
+    justify-content: flex-start;
     gap: 0;
-    padding: 10px 32px 24px;
+    padding: 10px clamp(24px, 3.5vw, 60px) 24px;
+    border-bottom: 1px solid var(--color-border);
+    transform: translateY(-140%);
+    opacity: 0;
+    transition: var(--transition);
+    pointer-events: none;
+  }
+
+  body[data-shell="app"] .nav-links.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body[data-shell="app"] .nav-links a {
+    padding: 12px 0;
+    width: 100%;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  body[data-shell="app"] .nav-toggle {
+    display: block;
+  }
+}
+
+/* The site shell's four links run out of room near 900px, so it folds here.
+   The app shell is already folded by the block above. */
+@media (max-width: 899px) {
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--color-cream);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 10px clamp(24px, 3.5vw, 60px) 24px;
     border-bottom: 1px solid var(--color-border);
     transform: translateY(-140%);
     opacity: 0;
@@ -1215,12 +1300,23 @@ form.contact-form {
     border-bottom: 1px solid var(--color-border);
   }
 
-  .nav-cta .btn-secondary {
-    display: none;
-  }
-
   .nav-toggle {
     display: block;
+  }
+
+  .brand,
+  .nav-cta {
+    flex-shrink: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  section {
+    padding: 64px 0;
+  }
+
+  .nav-cta .btn-secondary {
+    display: none;
   }
 
   .hero-stats {
@@ -1403,8 +1499,6 @@ form.contact-form {
   max-width: calc(100vw - 32px);
   text-align: center;
 }
-
-:root[data-theme="dark"] .hm-toast { background: #f3ece4; color: #1b1714; }
 
 .hm-toast.visible { opacity: 1; transform: translate(-50%, 0); }
 

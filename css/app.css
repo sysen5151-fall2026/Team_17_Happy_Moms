@@ -549,8 +549,6 @@
   font-weight: 600;
 }
 
-:root[data-theme="dark"] .metric-btn.active { color: #1b1714; }
-
 .chart-frame { margin-top: 6px; }
 
 .chart-legend {
@@ -728,8 +726,6 @@
   border-radius: 18px 18px 4px 18px;
   font-size: 0.94rem;
 }
-
-:root[data-theme="dark"] .msg-user { color: #1b1714; }
 
 .msg-bot {
   align-self: flex-start;

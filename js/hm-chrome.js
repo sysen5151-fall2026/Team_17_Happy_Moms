@@ -14,29 +14,29 @@ window.HM = window.HM || {};
 
   /* ---------------------------------------------------------------- theme */
 
+  /* Light unless the reader has chosen otherwise. A first visit gets light even
+     on a dark device; "auto" only comes back once it is picked in the profile. */
   function storedTheme() {
     try {
       var raw = window.localStorage.getItem(HM.store.key);
-      if (!raw) return "auto";
+      if (!raw) return "light";
       var parsed = JSON.parse(raw);
-      return (parsed.settings && parsed.settings.theme) || "auto";
+      return (parsed.settings && parsed.settings.theme) || "light";
     } catch (err) {
-      return "auto";
+      return "light";
     }
   }
 
+  /* The attribute is always written, including for "auto", because the
+     stylesheet scopes its prefers-color-scheme block to data-theme="auto". */
   function applyTheme(theme) {
-    var root = document.documentElement;
-    if (theme === "light" || theme === "dark") {
-      root.setAttribute("data-theme", theme);
-    } else {
-      root.removeAttribute("data-theme");
-    }
+    var resolved = theme === "dark" || theme === "auto" ? theme : "light";
+    document.documentElement.setAttribute("data-theme", resolved);
   }
 
   function effectiveTheme() {
     var explicit = document.documentElement.getAttribute("data-theme");
-    if (explicit) return explicit;
+    if (explicit === "light" || explicit === "dark") return explicit;
     return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark" : "light";
   }
