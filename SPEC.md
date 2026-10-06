@@ -1,11 +1,6 @@
 # Happy Moms — Specification
 
 **Status:** Draft v0.1 · Milestone 1 · October 6, 2026
-**Source of truth:** the Innoslate model (needs N-1 to N-9, stakeholder requirements StR1.1 to StR6.2).
-To change anything here, change the model first, then update this file.
-**How this file is used:** every prompt that generates code for this project includes this file
-and the model artifact the change traces to (lab manual §3.5). Code that traces to nothing
-here is out of scope.
 
 Related: [`docs/walking-skeleton.md`](docs/walking-skeleton.md) (primary use case, step by step) ·
 [`docs/traceability.md`](docs/traceability.md) (every capability mapped to the model).
