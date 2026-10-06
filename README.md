@@ -1,5 +1,17 @@
 # Happy Moms
 
+## Operational concept
+
+When first using Happy Moms, the expecting mother creates a baseline wellness profile that
+gives the system a reference point for trends. She then does a quick daily check-in, plays a
+short puzzle, reads wellness tip cards, and can ask the guardrailed assistant everyday
+questions. Between prenatal visits the check-ins build a wellness record; when an appointment
+approaches, the system generates a one-page summary that she reviews and chooses whether to
+share with her OB/GYN. Crisis information is always available as a separate path. The system
+stays outside clinical diagnosis, prescribing, and treatment.
+
+## About this repository
+
 A pregnancy wellness tracking and appointment preparation web app, built by Team New
 Edition (Team 17) for SYSEN 5151 at Cornell.
 
@@ -68,7 +80,7 @@ contact page and footer point somewhere real.
 | --- | --- | --- |
 | Home | `index.html` | What the project is, the research behind it, where the boundary sits |
 | Today | `app.html` | Dashboard: current week, whether today is logged, recent observations |
-| Daily check-in | `checkin.html` | Seven-step micro-survey, about thirty seconds |
+| Daily check-in | `checkin.html` | Seven-step micro-survey; target 15 seconds or less (StR1.1) |
 | Trends | `trends.html` | Charts, continuity of capture, weekly averages, observations |
 | Visit notes | `summary.html` | One-page provider summary, copy / download / print |
 | Assistant | `assistant.html` | Guardrailed Q&A over vetted content |

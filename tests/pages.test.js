@@ -233,7 +233,7 @@ module.exports = {
       const range = HM.summary.resolveRange(state, "30");
       const text = HM.summary.buildText(state, range, HM.summary.statsFor(state, range));
 
-      t.check("summary text is titled", text.includes("PATIENT-REPORTED WELLNESS SUMMARY"));
+      t.check("summary text is titled", text.includes("PATIENT-GENERATED, NON-DIAGNOSTIC WELLNESS SUMMARY"));
       t.check("summary text leads with urgent signs", text.includes("FLAGGED FOR DISCUSSION"));
       t.check("summary text includes averages", text.includes("AVERAGES FOR THIS INTERVAL"));
       t.check("summary text includes saved questions", text.includes("QUESTIONS I WANT TO ASK"));
@@ -251,9 +251,9 @@ module.exports = {
         HM.externalAIService && HM.externalAIService.isStub && HM.externalAIService.calls >= 1);
       t.check("UC-P1 step 10: a stubbed reply falls back to the system composer",
         /fallback composer/.test(HM.summary.generatedBy()));
-      t.check("UC-P1 step 11 / StR6.2: presented summary is labelled patient-reported and not a diagnosis",
-        /Patient-reported/.test(window.document.getElementById("sheet").innerHTML) &&
-        /Not a diagnosis/.test(window.document.getElementById("sheet").innerHTML));
+      t.check("UC-P1 step 11 / StR6.2: presented summary is labelled patient-generated and non-diagnostic",
+        /Patient-generated/.test(window.document.getElementById("sheet").innerHTML) &&
+        /non-diagnostic/.test(window.document.getElementById("sheet").innerHTML));
       window.close();
     }
 

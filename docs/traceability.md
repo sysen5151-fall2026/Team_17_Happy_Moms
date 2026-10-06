@@ -38,11 +38,11 @@ review and input, UC.12 coordinator onboarding (README "Known limits: no partner
 
 | ID | Gap | Action | Owner | Due |
 | --- | --- | --- | --- | --- |
-| G-1 | StR1.1 says a check-in takes 15 s or less; `index.html` and `puzzle.html` say "about thirty seconds" | Time five check-ins; fix the copy, or revise StR1.1 with rationale | | Oct 7 (before class) |
+| G-1 | StR1.1 says a check-in takes 15 s or less; `index.html` and `puzzle.html` say "about thirty seconds" | Copy fixed Oct 6 (no time claim). Still to do: time five check-ins for MOE-1.1 | | Oct 18 |
 | G-2 | UC.3 Review Trends has no stakeholder requirement | Add a StR under N-3 (or trace UC.3 to StR4.1 as a supporting function) in Innoslate | | Oct 18 |
 | G-3 | Two capabilities have no model counterpart: the questions list and puzzle-result sharing | Add a requirement for each under N-3 / N-5, or remove them | | Oct 18 |
 | G-4 | Model: C.6 runs the assistant. Product: pre-written answers, no AI call | Record as an architecture decision (`docs/decisions/0002-assistant-retrieval.md`); either add a C.6 stub to the assistant path or update the model | | Oct 18 |
-| G-5 | StR6.2 wording is "patient-generated"; the summary says "Patient-reported" | Align the label text or the requirement | | Oct 7 |
+| G-5 | StR6.2 wording is "patient-generated"; the summary says "Patient-reported" | Done Oct 6: label now "Patient-generated, non-diagnostic" | | Done |
 | G-6 | Lab §1.4/§3.5 files missing: `SPEC.md`, `docs/context.md`, `docs/prompt-log.md`, `docs/environment.md`, ADR 0001; tests are not named for need IDs | Add from the Canvas submission (needs, StRs, acceptance criteria); rename tests to carry need IDs | | Oct 18 |
 | G-7 | Directories are named for technology (`js/`, `css/`), not boundary elements | Revisit at the Chapter 6 audit | | Milestone 2 |
-| G-8 | README does not open with the OpsCon narrative copied from the model (lab §1.4) | Paste the Canvas §2.1 OpsCon text as the README's first section | | Oct 7 |
+| G-8 | README does not open with the OpsCon narrative copied from the model (lab §1.4) | Done Oct 6: README opens with the §2.1 OpsCon text | | Done |

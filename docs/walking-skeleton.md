@@ -34,7 +34,7 @@ manual (§2.5) asks for. Participant names are the asset names from the Innoslat
 | 8 | Mother → System | Requests a summary for the period since her last visit | UC.1.22 | `summary.html`; `hm-summary.js` `resolveRange("sinceVisit")` starts at `profile.lastVisit` (28 days if not set) | Real |
 | 9 | System → External AI Service | Sends the logged entries | UC.1.23 | `hm-summary.js` `requestSummary()` → `HM.externalAIService.generateAppointmentSummary({ interval, entries })` | Real call to a stub |
 | 10 | External AI Service → System | Generates the appointment summary | UC.1.24 | `js/hm-external-ai-service.js` returns `{ status: "stub", summaryText: null }` | **Stub** |
-| 11 | System → Mother | Presents a one-page summary labeled patient-generated and non-diagnostic | new action (to add to the model) | With no generated text, `buildText()` / `renderSheet()` compose it from the entries; `@media print` in `css/style.css` keeps it to one page; footer reads "Patient-reported wellness log … Not a diagnosis" | Real (fallback composer) |
+| 11 | System → Mother | Presents a one-page summary labeled patient-generated and non-diagnostic | new action (to add to the model) | With no generated text, `buildText()` / `renderSheet()` compose it from the entries; `@media print` in `css/style.css` keeps it to one page; footer reads "Patient-generated, non-diagnostic wellness log" | Real (fallback composer) |
 | 12 | Mother | Reviews and explicitly authorizes sharing | UC.1.25 | "Copy as text", "Download .txt", "Print or save as PDF", "Share" (`wireActions()`). Nothing leaves the device without one of these | Real |
 | 13 | Mother → OB/GYN Provider | Provider receives the shared summary | UC.1.26 | Outside the SoI. No EHR link (StR6.1) | External |
 

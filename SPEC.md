@@ -104,7 +104,7 @@ validation. **Check** names the existing test in `npm test`, or the test still t
 | Req | Requirement | Acceptance criterion | Check | Status |
 | --- | --- | --- | --- | --- |
 | StR6.1 | Provide appointment summaries without requiring integration with a provider's electronic health record system. | Full summary workflow demonstrated with no EHR connection or data entry. | Walking skeleton demo (`docs/walking-skeleton.md`, step 13) | ✅ |
-| StR6.2 | Label every appointment summary as patient-generated and non-diagnostic. | 100% of generated summaries contain both designations. | "summary text carries the disclaimer", "UC-P1 step 11 / StR6.2 …". See open issue O-2 (wording) | ◐ |
+| StR6.2 | Label every appointment summary as patient-generated and non-diagnostic. | 100% of generated summaries contain both designations. | "summary text is titled", "UC-P1 step 11 / StR6.2 …" (both designations on the sheet and in the text export) | ✅ |
 
 ---
 
@@ -226,8 +226,8 @@ covered" reply (StR3.2).
 | ID | Issue | Resolution path | Due |
 | --- | --- | --- | --- |
 | O-1 | StR3.1 approves ACOG, FDA and NIH, but 10 tips and answers cite the CDC. | Add CDC to the approved list in the model and StR3.1, or re-source those entries. | Oct 18 |
-| O-2 | StR6.2 says "patient-generated"; the summary says "Patient-reported". | Align the label text or the requirement. | Oct 7 |
+| O-2 | ~~StR6.2 says "patient-generated"; the summary said "Patient-reported".~~ | Closed Oct 6: summary now reads "Patient-generated, non-diagnostic". | Done |
 | O-3 | The model has C.6 running the assistant; the product uses a fixed answer library. | Record the decision in `docs/decisions/`; update the model or stub C.6 on the assistant path. | Oct 18 |
-| O-4 | Site text says a check-in takes "about thirty seconds"; StR1.1 says ≤ 15 s. | Time five check-ins; fix the text or revise StR1.1. | Oct 7 |
+| O-4 | StR1.1 (≤ 15 s) is not yet measured. Site text no longer claims a time (was "about thirty seconds"). | Time five check-ins; record the median as MOE-1.1. | Oct 18 |
 | O-5 | Three capabilities trace to a need and use case but no requirement: trends (UC.3), the questions-to-ask list (N-3), puzzle sharing (UC.6). | Add requirements in Innoslate, then here. | Oct 18 |
 | O-6 | ☐ and ◐ checks above are not yet automated tests named by need ID. | Write them as failing tests, then make them pass. | Oct 18 |
