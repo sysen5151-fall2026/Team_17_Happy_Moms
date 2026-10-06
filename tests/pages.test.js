@@ -243,6 +243,20 @@ module.exports = {
       window.close();
     }
 
+    // ---------- UC-P1 walking skeleton: every modeled participant is visited
+    {
+      const { window } = await loadPage("summary.html", seed());
+      const HM = window.HM;
+      t.check("UC-P1 step 9: summary request reaches the External AI Service (C.6) stub",
+        HM.externalAIService && HM.externalAIService.isStub && HM.externalAIService.calls >= 1);
+      t.check("UC-P1 step 10: a stubbed reply falls back to the system composer",
+        /fallback composer/.test(HM.summary.generatedBy()));
+      t.check("UC-P1 step 11 / StR6.2: presented summary is labelled patient-reported and not a diagnosis",
+        /Patient-reported/.test(window.document.getElementById("sheet").innerHTML) &&
+        /Not a diagnosis/.test(window.document.getElementById("sheet").innerHTML));
+      window.close();
+    }
+
     // ---------- profile editing and the theme toggle
     {
       const { window } = await loadPage("profile.html", seed());

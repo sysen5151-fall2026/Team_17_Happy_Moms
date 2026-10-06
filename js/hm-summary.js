@@ -410,13 +410,30 @@ window.HM = window.HM || {};
     });
   }
 
+  /* UC-P1 steps 8-11 (UC.1.22 -> UC.1.23 -> UC.1.24 -> present).
+     Step 8:  the mother picks an interval; "Since last visit" is the default.
+     Step 9:  the system gathers the logged entries and sends them to the
+              External AI Service (C.6), which is a stub at Milestone 1.
+     Step 10: C.6 replies. A null summaryText means nothing was generated,
+              so the system composes the summary itself (deterministic,
+              entry-for-entry, which is what StR4.2 asks for).
+     Step 11: present the one-page sheet labelled patient-reported and
+              non-diagnostic (StR4.3, StR6.2). */
+  function requestSummary(state, range, data) {
+    var reply = HM.externalAIService
+      ? HM.externalAIService.generateAppointmentSummary({ interval: range, entries: data.entries })
+      : null;
+    current.generatedBy = reply && reply.summaryText ? "External AI Service" : "Happy Moms System (fallback composer)";
+    return (reply && reply.summaryText) || buildText(state, range, data);
+  }
+
   function render() {
     var state = HM.store.load();
-    var range = resolveRange(state, current.rangeId);
-    var data = statsFor(state, range);
+    var range = resolveRange(state, current.rangeId);   // step 8
+    var data = statsFor(state, range);                  // step 9: gather logged entries
 
     current.range = range;
-    current.text = buildText(state, range, data);
+    current.text = requestSummary(state, range, data);  // steps 9-10
 
     renderRangeButtons(state);
 
@@ -456,6 +473,9 @@ window.HM = window.HM || {};
     render();
   }
 
-  HM.summary = { init: init, render: render, buildText: buildText, resolveRange: resolveRange, statsFor: statsFor };
+  HM.summary = {
+    init: init, render: render, buildText: buildText, resolveRange: resolveRange, statsFor: statsFor,
+    generatedBy: function () { return current.generatedBy; }
+  };
   HM.dom.ready(init);
 })(window.HM);
