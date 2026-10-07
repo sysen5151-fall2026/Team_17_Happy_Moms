@@ -14,7 +14,7 @@ manual (§2.5) asks for. Participant names are the asset names from the Innoslat
 | Model asset | ID | Where it lives in the product | Real or stub |
 | --- | --- | --- | --- |
 | Expecting Mother | C.1 | The person using the browser | Real (outside the SoI) |
-| Happy Moms System, front end | C.3 | One HTML page per screen (`app.html`, `profile.html`, `quiz.html`, `checkin.html`, `summary.html`) | Real |
+| Happy Moms System, front end | C.3 | One HTML page per screen (`html/app.html`, `html/profile.html`, `html/quiz.html`, `html/checkin.html`, `html/summary.html`) | Real |
 | Happy Moms System, application services | C.3 | `js/hm-*.js` modules on the shared `HM` namespace | Real |
 | Happy Moms System, user data store | C.3 | `HM.store` in `js/hm-core.js`, one browser `localStorage` key `happymoms.v1` | Real, substituted: browser storage stands in for the modeled database (no server at this stage) |
 | External AI Service | C.6 | `js/hm-external-ai-service.js` | **Stub**: returns a fixed response shape, no model call |
@@ -24,14 +24,14 @@ manual (§2.5) asks for. Participant names are the asset names from the Innoslat
 
 | # | From → To | Message (model) | Action | Code | Status |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Mother → System | Initiates the application | UC.1.1 | `index.html` "Open the app" → `app.html` (`js/hm-app.js`) | Real |
+| 1 | Mother → System | Initiates the application | UC.1.1 | `index.html` "Open the app" → `html/app.html` (`js/hm-app.js`) | Real |
 | 2 | System → Mother | Requests baseline wellness information | UC.1.2 | `hm-app.js` `renderSetupBanner()` prompts "Add your due date" when no profile exists | Real |
-| 3 | Mother → System | Provides baseline wellness (gestational week, baseline notes) | UC.1.3 | `profile.html` due date and last-visit fields (`js/hm-profile.js`); `quiz.html` six-question baseline (`js/quiz.js`). Gestational week is derived from the due date by `HM.gestation.of()` | Real |
+| 3 | Mother → System | Provides baseline wellness (gestational week, baseline notes) | UC.1.3 | `html/profile.html` due date and last-visit fields (`js/hm-profile.js`); `html/quiz.html` six-question baseline (`js/quiz.js`). Gestational week is derived from the due date by `HM.gestation.of()` | Real |
 | 4 | System → data store | Stores the user profile | UC.1.4 | `HM.store.update()` writes `profile{}` (`js/hm-core.js`) | Real |
-| 5 | Mother → System | Completes a daily wellness check-in | UC.1.9 | `checkin.html`, `js/hm-checkin.js`, seven-step `FLOW` | Real |
+| 5 | Mother → System | Completes a daily wellness check-in | UC.1.9 | `html/checkin.html`, `js/hm-checkin.js`, seven-step `FLOW` | Real |
 | 6 | System → data store | Records wellness information in the longitudinal record | UC.1.11 | `hm-checkin.js` `save()` writes `checkins[date]` | Real |
 | 7 | Mother | Repeats 5–6 between visits | UC.1.9, UC.1.11 | Real use, or for the demo `HM.sample.load()` seeds 21 days of entries (`js/hm-sample.js`) | Test-data stub for the demo |
-| 8 | Mother → System | Requests a summary for the period since her last visit | UC.1.22 | `summary.html`; `hm-summary.js` `resolveRange("sinceVisit")` starts at `profile.lastVisit` (28 days if not set) | Real |
+| 8 | Mother → System | Requests a summary for the period since her last visit | UC.1.22 | `html/summary.html`; `hm-summary.js` `resolveRange("sinceVisit")` starts at `profile.lastVisit` (28 days if not set) | Real |
 | 9 | System → External AI Service | Sends the logged entries | UC.1.23 | `hm-summary.js` `requestSummary()` → `HM.externalAIService.generateAppointmentSummary({ interval, entries })` | Real call to a stub |
 | 10 | External AI Service → System | Generates the appointment summary | UC.1.24 | `js/hm-external-ai-service.js` returns `{ status: "stub", summaryText: null }` | **Stub** |
 | 11 | System → Mother | Presents a one-page summary labeled patient-generated and non-diagnostic | new action (to add to the model) | With no generated text, `buildText()` / `renderSheet()` compose it from the entries; `@media print` in `css/style.css` keeps it to one page; footer reads "Patient-generated, non-diagnostic wellness log" | Real (fallback composer) |
@@ -41,7 +41,7 @@ manual (§2.5) asks for. Participant names are the asset names from the Innoslat
 ## How to run the path
 
 1. Open the live build (or `python -m http.server 8000` and go to `http://localhost:8000`).
-2. **Open the app** → **Profile**: set a due date and a last-visit date → **Save**. Optionally take the baseline in `quiz.html`.
+2. **Open the app** → **Profile**: set a due date and a last-visit date → **Save**. Optionally take the baseline in `html/quiz.html`.
 3. **Check in**: tap through the seven steps.
 4. To simulate weeks of entries, use **Load sample data** (Today or Visit notes).
 5. **Visit notes** → **Since last visit** → the one-page sheet appears.

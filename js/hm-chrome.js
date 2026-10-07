@@ -67,29 +67,77 @@ window.HM = window.HM || {};
 
   HM.theme = { apply: applyTheme, toggle: toggleTheme, effective: effectiveTheme };
 
+  /* ---------------------------------------------------------------- paths */
+
+  /* Pages sit at two levels: index.html at the site root, every other page in
+     html/. The chrome is rendered on both, so links are built rather than
+     hardcoded.
+
+     Relative, never root-absolute: a GitHub Pages project site is served from
+     https://user.github.io/<repo>/, where a link to /html/app.html would miss
+     the repository segment entirely and 404. Relative paths also survive
+     file:// and any sub-path deployment.
+
+     Each page states its distance from the root in data-root on <body>. The
+     body does not exist yet when this file runs in <head>, so the prefix is
+     read at render time rather than at load. */
+  function rootPrefix() {
+    var body = document.body;
+    var declared = body && body.getAttribute("data-root");
+    if (declared !== null && declared !== undefined) return declared;
+
+    /* Fallback for a page that forgot the attribute: look at the folder the
+       current document sits in. */
+    var parts = window.location.pathname.split("/");
+    return parts[parts.length - 2] === "html" ? "../" : "";
+  }
+
+  /* A page that lives in html/. */
+  function pageHref(file) {
+    return rootPrefix() ? file : "html/" + file;
+  }
+
+  /* A file that lives at the site root, such as index.html. */
+  function rootHref(file) {
+    return rootPrefix() + file;
+  }
+
+  HM.paths = {
+    prefix: rootPrefix,
+    page: pageHref,
+    root: rootHref,
+    home: function () { return rootHref("index.html"); }
+  };
+
   /* ------------------------------------------------------------ nav model */
 
   var BRAND_SVG =
     '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#c98a93"/>' +
     '<path d="M32 46c-9-6-16-13-16-21a10 10 0 0 1 16-8 10 10 0 0 1 16 8c0 8-7 15-16 21z" fill="#fdf8f3"/></svg>';
 
+  /* `file` is the bare file name; the href is resolved per page at render
+     time. `atRoot` marks the one page that is not in html/. */
   var SITE_LINKS = [
-    { page: "home", href: "index.html", label: "Home" },
-    { page: "tips", href: "tips.html", label: "Wellness tips" },
-    { page: "about", href: "about.html", label: "About" },
-    { page: "contact", href: "contact.html", label: "Contact" }
+    { page: "home", file: "index.html", atRoot: true, label: "Home" },
+    { page: "tips", file: "tips.html", label: "Wellness tips" },
+    { page: "about", file: "about.html", label: "About" },
+    { page: "contact", file: "contact.html", label: "Contact" }
   ];
 
   var APP_LINKS = [
-    { page: "app", href: "app.html", label: "Today", icon: "home" },
-    { page: "checkin", href: "checkin.html", label: "Check-in", icon: "check" },
-    { page: "trends", href: "trends.html", label: "Trends", icon: "chart" },
-    { page: "summary", href: "summary.html", label: "Visit notes", icon: "notes" },
-    { page: "assistant", href: "assistant.html", label: "Assistant", icon: "chat" },
-    { page: "puzzle", href: "puzzle.html", label: "Daily puzzle", icon: "grid" },
-    { page: "tips", href: "tips.html", label: "Tips", icon: "leaf" },
-    { page: "profile", href: "profile.html", label: "Profile", icon: "user" }
+    { page: "app", file: "app.html", label: "Today", icon: "home" },
+    { page: "checkin", file: "checkin.html", label: "Check-in", icon: "check" },
+    { page: "trends", file: "trends.html", label: "Trends", icon: "chart" },
+    { page: "summary", file: "summary.html", label: "Visit notes", icon: "notes" },
+    { page: "assistant", file: "assistant.html", label: "Assistant", icon: "chat" },
+    { page: "puzzle", file: "puzzle.html", label: "Daily puzzle", icon: "grid" },
+    { page: "tips", file: "tips.html", label: "Tips", icon: "leaf" },
+    { page: "profile", file: "profile.html", label: "Profile", icon: "user" }
   ];
+
+  function linkHref(entry) {
+    return entry.atRoot ? rootHref(entry.file) : pageHref(entry.file);
+  }
 
   var ICONS = {
     home: '<path d="M4 11l8-6.5 8 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/>',
@@ -113,19 +161,19 @@ window.HM = window.HM || {};
     var links = shell === "app" ? APP_LINKS : SITE_LINKS;
     var navHtml = links.map(function (l) {
       var current = l.page === page ? ' aria-current="page"' : "";
-      return '<a href="' + l.href + '"' + current + ">" + HM.dom.escapeHtml(l.label) + "</a>";
+      return '<a href="' + linkHref(l) + '"' + current + ">" + HM.dom.escapeHtml(l.label) + "</a>";
     }).join("");
 
     var cta = shell === "app"
-      ? '<a class="btn btn-primary btn-sm" href="checkin.html">Daily check-in</a>'
-      : '<a class="btn btn-primary btn-sm" href="app.html">Open the app</a>';
+      ? '<a class="btn btn-primary btn-sm" href="' + pageHref("checkin.html") + '">Daily check-in</a>'
+      : '<a class="btn btn-primary btn-sm" href="' + pageHref("app.html") + '">Open the app</a>';
 
     return '' +
       '<div class="nav">' +
-        '<a href="' + (shell === "app" ? "app.html" : "index.html") + '" class="brand">' + BRAND_SVG + " Happy Moms</a>" +
+        '<a href="' + (shell === "app" ? pageHref("app.html") : rootHref("index.html")) + '" class="brand">' + BRAND_SVG + " Happy Moms</a>" +
         '<nav class="nav-links" aria-label="Primary">' + navHtml + "</nav>" +
         '<div class="nav-cta">' +
-          '<a class="urgent-link" href="crisis.html" title="Urgent help and warning signs">' +
+          '<a class="urgent-link" href="' + pageHref("crisis.html") + '" title="Urgent help and warning signs">' +
             '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 4.5l8 14H4z"/><path d="M12 10v4M12 16.6v.2"/></svg>' +
             "<span>Urgent help</span>" +
           "</a>" +
@@ -142,7 +190,7 @@ window.HM = window.HM || {};
   function tabBarHtml(page) {
     var items = APP_LINKS.slice(0, 6).map(function (l) {
       var current = l.page === page ? ' class="current" aria-current="page"' : "";
-      return '<a href="' + l.href + '"' + current + ">" + icon(l.icon) +
+      return '<a href="' + linkHref(l) + '"' + current + ">" + icon(l.icon) +
         "<span>" + HM.dom.escapeHtml(l.label) + "</span></a>";
     }).join("");
     return '<nav class="tab-bar" aria-label="App sections">' + items + "</nav>";
@@ -169,21 +217,21 @@ window.HM = window.HM || {};
           '<div class="footer-col">' +
             "<h5>The app</h5>" +
             "<ul>" +
-              '<li><a href="app.html">Today</a></li>' +
-              '<li><a href="checkin.html">Daily check-in</a></li>' +
-              '<li><a href="trends.html">Trends</a></li>' +
-              '<li><a href="summary.html">Visit notes</a></li>' +
-              '<li><a href="puzzle.html">Daily puzzle</a></li>' +
+              '<li><a href="' + pageHref("app.html") + '">Today</a></li>' +
+              '<li><a href="' + pageHref("checkin.html") + '">Daily check-in</a></li>' +
+              '<li><a href="' + pageHref("trends.html") + '">Trends</a></li>' +
+              '<li><a href="' + pageHref("summary.html") + '">Visit notes</a></li>' +
+              '<li><a href="' + pageHref("puzzle.html") + '">Daily puzzle</a></li>' +
             "</ul>" +
           "</div>" +
           '<div class="footer-col">' +
             "<h5>Learn</h5>" +
             "<ul>" +
-              '<li><a href="tips.html">Wellness tips</a></li>' +
-              '<li><a href="assistant.html">Wellness assistant</a></li>' +
-              '<li><a href="quiz.html">Baseline check-in</a></li>' +
-              '<li><a href="about.html">About the project</a></li>' +
-              '<li><a href="contact.html">Contact and feedback</a></li>' +
+              '<li><a href="' + pageHref("tips.html") + '">Wellness tips</a></li>' +
+              '<li><a href="' + pageHref("assistant.html") + '">Wellness assistant</a></li>' +
+              '<li><a href="' + pageHref("quiz.html") + '">Baseline check-in</a></li>' +
+              '<li><a href="' + pageHref("about.html") + '">About the project</a></li>' +
+              '<li><a href="' + pageHref("contact.html") + '">Contact and feedback</a></li>' +
             "</ul>" +
           "</div>" +
           '<div class="footer-col">' +
@@ -194,13 +242,13 @@ window.HM = window.HM || {};
         "</div>" +
         '<div class="footer-note">' +
           "<strong>Not medical advice.</strong> " + HM.dom.escapeHtml(cfg.disclaimer) +
-          ' For warning signs and crisis lines, see <a href="crisis.html">urgent help</a>.' +
+          ' For warning signs and crisis lines, see <a href="' + pageHref("crisis.html") + '">urgent help</a>.' +
         "</div>" +
         '<div class="footer-bottom">' +
           "<span>&copy; <span id=\"year\"></span> Happy Moms &middot; " +
           HM.dom.escapeHtml(cfg.course.number) + " " + HM.dom.escapeHtml(cfg.course.term) + "</span>" +
           '<div class="legal-links">' +
-            '<a href="profile.html#data">Your data</a>' +
+            '<a href="' + pageHref("profile.html") + '#data">Your data</a>' +
             '<a href="' + cfg.repoUrl + '" target="_blank" rel="noopener noreferrer">Source code</a>' +
           "</div>" +
         "</div>" +

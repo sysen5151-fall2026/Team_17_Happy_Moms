@@ -78,24 +78,26 @@ contact page and footer point somewhere real.
 
 | Page | File | What it does |
 | --- | --- | --- |
-| Home | `index.html` | What the project is, the research behind it, where the boundary sits |
-| Today | `app.html` | Dashboard: current week, whether today is logged, recent observations |
-| Daily check-in | `checkin.html` | Seven-step micro-survey; target 15 seconds or less (StR1.1) |
-| Trends | `trends.html` | Charts, continuity of capture, weekly averages, observations |
-| Visit notes | `summary.html` | One-page provider summary, copy / download / print |
-| Assistant | `assistant.html` | Guardrailed Q&A over vetted content |
-| Daily puzzle | `puzzle.html` | Five-letter pregnancy word game, shareable result |
-| Wellness tips | `tips.html` | 45 sourced cards, filterable and saveable |
-| Baseline | `quiz.html` | One-time six-question baseline profile |
-| Profile and data | `profile.html` | Due date, provider, theme, export / import / delete |
-| Urgent help | `crisis.html` | Warning signs and crisis lines, written in plain HTML |
-| About | `about.html` | Mission, scope boundary, stakeholders, roadmap |
-| Contact | `contact.html` | Feedback and issue reporting |
+| Home | `index.html` (root) | What the project is, the research behind it, where the boundary sits |
+| Today | `html/app.html` | Dashboard: current week, whether today is logged, recent observations |
+| Daily check-in | `html/checkin.html` | Seven-step micro-survey; target 15 seconds or less (StR1.1) |
+| Trends | `html/trends.html` | Charts, continuity of capture, weekly averages, observations |
+| Visit notes | `html/summary.html` | One-page provider summary, copy / download / print |
+| Assistant | `html/assistant.html` | Guardrailed Q&A over vetted content |
+| Daily puzzle | `html/puzzle.html` | Five-letter pregnancy word game, shareable result |
+| Wellness tips | `html/tips.html` | 45 sourced cards, filterable and saveable |
+| Baseline | `html/quiz.html` | One-time six-question baseline profile |
+| Profile and data | `html/profile.html` | Due date, provider, theme, export / import / delete |
+| Urgent help | `html/crisis.html` | Warning signs and crisis lines, written in plain HTML |
+| About | `html/about.html` | Mission, scope boundary, stakeholders, roadmap |
+| Contact | `html/contact.html` | Feedback and issue reporting |
 
 ## Project structure
 
 ```
-├── *.html                 one file per page, each a thin shell
+├── index.html             landing page, must stay at the root
+├── 404.html               GitHub Pages only serves a custom 404 from the root
+├── html/                  every other page, one thin shell each
 ├── css/
 │   ├── style.css          design tokens, both themes, page chrome, charts
 │   └── app.css            app components: tiles, check-in, chat, puzzle, sheet
@@ -123,13 +125,23 @@ contact page and footer point somewhere real.
 └── .nojekyll              tells GitHub Pages to serve files untouched
 ```
 
+Pages in `html/` reach shared files one level up (`../css/style.css`), and link
+to each other by bare file name. `index.html` and `404.html` sit at the root and
+reach pages the other way (`html/app.html`).
+
+**Paths are always relative, never root-absolute.** A GitHub Pages project site
+is served from `https://user.github.io/<repo>/`, so `/html/app.html` drops the
+repository segment and 404s. Relative paths work there, on a user site, on a
+custom domain, on `localhost`, and from `file://`. The page suite fails any link
+starting with `/`.
+
 ## How the pieces fit
 
-Every page is a thin shell. It declares two attributes on `<body>`, drops in two empty
-containers, and loads the modules it needs:
+Every page is a thin shell. It declares three attributes on `<body>`, drops in two
+empty containers, and loads the modules it needs:
 
 ```html
-<body data-shell="app" data-page="trends">
+<body data-shell="app" data-page="trends" data-root="../">
   <header id="siteHeader"></header>
   <main class="app-main"> ... mount points ... </main>
   <footer id="siteFooter"></footer>
@@ -137,7 +149,13 @@ containers, and loads the modules it needs:
 
 `hm-chrome.js` fills the header and footer, so navigation is edited in exactly one
 place rather than in thirteen HTML files. `data-shell` picks the public or in-app
-navigation; `data-page` marks the current link.
+navigation, and `data-page` marks the current link.
+
+`data-root` is how far that page sits from the site root: `../` for anything in
+`html/`, empty for `index.html` and `404.html`. The chrome reads it to build links
+that work from either level, which is why a new page must carry it. Forget it and
+the chrome falls back to reading the folder out of the URL, which is right in the
+normal case but not worth relying on.
 
 Script order matters, since these are plain scripts sharing one `HM` namespace rather
 than modules. In `<head>`: config, core, chrome. At the end of `<body>`: content,

@@ -10,7 +10,18 @@ module.exports = {
 
   run: async function (t) {
     const { JSDOM, VirtualConsole } = require("jsdom");
-    const pages = fs.readdirSync(ROOT).filter((f) => f.endsWith(".html")).sort();
+    /* index.html and 404.html sit at the repo root, because GitHub Pages
+       only serves a custom 404 from there. Every other page is in html/. */
+    const rootPages = fs.readdirSync(ROOT).filter((f) => f.endsWith(".html")).sort();
+    const subPages = fs.existsSync(path.join(ROOT, "html"))
+      ? fs.readdirSync(path.join(ROOT, "html")).filter((f) => f.endsWith(".html")).sort()
+        .map((f) => "html/" + f)
+      : [];
+    const pages = rootPages.concat(subPages);
+
+    /* Page names in this suite are repo-relative, so a page in html/ is
+       addressed as "html/app.html". */
+    const P = (file) => (rootPages.includes(file) ? file : "html/" + file);
 
     /* A realistic saved state: three weeks of entries, one urgent marking,
        one free-text note, one saved question. */
@@ -54,7 +65,7 @@ module.exports = {
         vc.on("error", (...a) => errors.push(a.join(" ")));
 
         const dom = new JSDOM(fs.readFileSync(path.join(ROOT, file), "utf8"), {
-          url: "https://example.org/" + file,
+          url: "https://example.org/" + file,   // keeps relative paths honest
           runScripts: "dangerously",
           pretendToBeVisual: true,
           virtualConsole: vc,
@@ -75,7 +86,8 @@ module.exports = {
           .filter((src) => src && !/^https?:/.test(src));
 
         try {
-          scripts.forEach((src) => window.eval(fs.readFileSync(path.join(ROOT, src), "utf8")));
+          const pageDir = path.dirname(path.join(ROOT, file));
+          scripts.forEach((src) => window.eval(fs.readFileSync(path.resolve(pageDir, src), "utf8")));
           window.document.dispatchEvent(new window.Event("DOMContentLoaded", { bubbles: true }));
         } catch (err) {
           errors.push("THREW: " + err.message);
@@ -105,53 +117,88 @@ module.exports = {
     const missing = [];
     pages.forEach((file) => {
       const html = fs.readFileSync(path.join(ROOT, file), "utf8");
+      const pageDir = path.dirname(path.join(ROOT, file));
       [...html.matchAll(/\shref="([^"]+)"/g)].map((m) => m[1])
         .concat([...html.matchAll(/\ssrc="([^"]+)"/g)].map((m) => m[1]))
         .forEach((href) => {
           if (/^(https?:|mailto:|tel:|sms:|#|data:)/.test(href)) return;
+          if (href.startsWith("/")) {
+            /* Root-absolute paths break on a project site served from
+               /<repo>/, so they are a failure even when the file exists. */
+            missing.push(file + " -> " + href + " (root-absolute)");
+            return;
+          }
           const target = href.split("#")[0].split("?")[0];
-          if (target && !fs.existsSync(path.join(ROOT, target))) missing.push(file + " -> " + target);
+          if (target && !fs.existsSync(path.resolve(pageDir, target))) {
+            missing.push(file + " -> " + target);
+          }
         });
     });
     t.check("every internal link and script resolves", missing.length === 0, missing.join(", "));
 
+    /* The chrome builds its links from data-root, so a page that omits it is
+       relying on a URL-sniffing fallback rather than stating the truth. */
+    const rootless = [];
+    pages.forEach((file) => {
+      const html = fs.readFileSync(path.join(ROOT, file), "utf8");
+      const declared = (html.match(/<body[^>]*\sdata-root="([^"]*)"/) || [])[1];
+      const expected = file.includes("/") ? "../" : "";
+      if (declared === undefined) rootless.push(file + " (absent)");
+      else if (declared !== expected) rootless.push(file + ' (="' + declared + '", want "' + expected + '")');
+    });
+    t.check("every page declares its distance from the site root", rootless.length === 0, rootless.join(", "));
+
     {
-      const { window } = await loadPage("app.html", seed());
-      const bad = [...new Set([...window.document.querySelectorAll("a[href]")]
-        .map((a) => a.getAttribute("href"))
-        .filter((h) => h && !/^(https?:|mailto:|tel:|sms:|#)/.test(h))
-        .map((h) => h.split("#")[0].split("?")[0])
-        .filter(Boolean))]
-        .filter((h) => !fs.existsSync(path.join(ROOT, h)));
-      t.check("links built at runtime resolve", bad.length === 0, bad.join(", "));
-      window.close();
+      /* The chrome renders on pages at two different depths, and it has to
+         produce a different prefix for each. Checking only one depth would
+         miss exactly the breakage that moving pages into html/ causes, so
+         both shells are checked at both levels. */
+      const fromEachLevel = [
+        "index.html",        // site shell, repo root
+        "404.html",          // site shell, repo root
+        P("app.html"),       // app shell, one level down
+        P("about.html")      // site shell, one level down
+      ];
+
+      for (const file of fromEachLevel) {
+        const { window } = await loadPage(file, seed());
+        const fromDir = path.dirname(path.join(ROOT, file));
+        const bad = [...new Set([...window.document.querySelectorAll("a[href]")]
+          .map((a) => a.getAttribute("href"))
+          .filter((h) => h && !/^(https?:|mailto:|tel:|sms:|#)/.test(h))
+          .map((h) => h.split("#")[0].split("?")[0])
+          .filter(Boolean))]
+          .filter((h) => h.startsWith("/") || !fs.existsSync(path.resolve(fromDir, h)));
+        t.check("links built at runtime resolve from " + file, bad.length === 0, bad.join(", "));
+        window.close();
+      }
     }
 
     // ---------- each page actually renders its content
     const renders = [
-      ["app.html", (w) => w.document.getElementById("appTiles").children.length >= 4, "Today shows its tiles"],
-      ["app.html", (w) => w.document.getElementById("appQuick").children.length >= 6, "Today shows quick links"],
-      ["app.html", (w) => w.document.getElementById("appObservations").children.length > 0, "Today shows observations"],
-      ["checkin.html", (w) => w.document.querySelectorAll("#ciSteps .scale-btn").length === 5, "Check-in shows a five-point scale"],
-      ["checkin.html", (w) => w.document.getElementById("ciProgressLabel").textContent.includes("of 7"), "Check-in is seven steps"],
-      ["trends.html", (w) => w.document.getElementById("trendChart").innerHTML.includes("<svg"), "Trends draws a chart"],
-      ["trends.html", (w) => w.document.getElementById("metricSwitch").children.length === 7, "Trends offers every measure"],
-      ["trends.html", (w) => w.document.getElementById("weekTable").innerHTML.includes("<table"), "Trends builds the weekly table"],
-      ["trends.html", (w) => !w.document.getElementById("urgentHistory").hidden, "Trends surfaces urgent markings"],
-      ["summary.html", (w) => w.document.getElementById("sheet").innerHTML.includes("Averages for this interval"), "Visit notes show averages"],
-      ["summary.html", (w) => w.document.getElementById("sheet").innerHTML.includes("Flagged for discussion"), "Visit notes lead with urgent signs"],
-      ["summary.html", (w) => w.document.getElementById("questionList").children.length >= 1, "Visit notes list saved questions"],
-      ["assistant.html", (w) => w.document.getElementById("chatLog").children.length >= 1, "Assistant explains itself first"],
-      ["assistant.html", (w) => w.document.getElementById("topicCloud").children.length >= 25, "Assistant lists its topics"],
-      ["puzzle.html", (w) => w.document.querySelectorAll("#pzBoard .pz-tile").length === 30, "Puzzle draws six rows of five"],
-      ["puzzle.html", (w) => w.document.querySelectorAll("#pzKeyboard .pz-key").length === 28, "Puzzle draws a keyboard"],
-      ["tips.html", (w) => w.document.querySelectorAll("#tipGrid .tip-card").length === w.HM.content.tips.length, "Tips renders every card"],
-      ["tips.html", (w) => !w.document.getElementById("tipForYou").hidden, "Tips matches recent check-ins"],
-      ["profile.html", (w) => w.document.querySelectorAll("#profileForm input").length >= 7, "Profile renders its fields"],
-      ["profile.html", (w) => w.document.getElementById("gestationPreview").innerHTML.includes("Week"), "Profile previews the week"],
-      ["quiz.html", (w) => w.document.querySelectorAll("#quizSteps .quiz-option").length === 24, "Baseline quiz renders every option"],
-      ["crisis.html", (w) => w.document.querySelectorAll('a[href^="tel:"]').length >= 3, "Urgent help lists phone numbers"],
-      ["index.html", (w) => w.document.querySelectorAll(".quick-link").length >= 6, "Home page lists the features"]
+      [P("app.html"), (w) => w.document.getElementById("appTiles").children.length >= 4, "Today shows its tiles"],
+      [P("app.html"), (w) => w.document.getElementById("appQuick").children.length >= 6, "Today shows quick links"],
+      [P("app.html"), (w) => w.document.getElementById("appObservations").children.length > 0, "Today shows observations"],
+      [P("checkin.html"), (w) => w.document.querySelectorAll("#ciSteps .scale-btn").length === 5, "Check-in shows a five-point scale"],
+      [P("checkin.html"), (w) => w.document.getElementById("ciProgressLabel").textContent.includes("of 7"), "Check-in is seven steps"],
+      [P("trends.html"), (w) => w.document.getElementById("trendChart").innerHTML.includes("<svg"), "Trends draws a chart"],
+      [P("trends.html"), (w) => w.document.getElementById("metricSwitch").children.length === 7, "Trends offers every measure"],
+      [P("trends.html"), (w) => w.document.getElementById("weekTable").innerHTML.includes("<table"), "Trends builds the weekly table"],
+      [P("trends.html"), (w) => !w.document.getElementById("urgentHistory").hidden, "Trends surfaces urgent markings"],
+      [P("summary.html"), (w) => w.document.getElementById("sheet").innerHTML.includes("Averages for this interval"), "Visit notes show averages"],
+      [P("summary.html"), (w) => w.document.getElementById("sheet").innerHTML.includes("Flagged for discussion"), "Visit notes lead with urgent signs"],
+      [P("summary.html"), (w) => w.document.getElementById("questionList").children.length >= 1, "Visit notes list saved questions"],
+      [P("assistant.html"), (w) => w.document.getElementById("chatLog").children.length >= 1, "Assistant explains itself first"],
+      [P("assistant.html"), (w) => w.document.getElementById("topicCloud").children.length >= 25, "Assistant lists its topics"],
+      [P("puzzle.html"), (w) => w.document.querySelectorAll("#pzBoard .pz-tile").length === 30, "Puzzle draws six rows of five"],
+      [P("puzzle.html"), (w) => w.document.querySelectorAll("#pzKeyboard .pz-key").length === 28, "Puzzle draws a keyboard"],
+      [P("tips.html"), (w) => w.document.querySelectorAll("#tipGrid .tip-card").length === w.HM.content.tips.length, "Tips renders every card"],
+      [P("tips.html"), (w) => !w.document.getElementById("tipForYou").hidden, "Tips matches recent check-ins"],
+      [P("profile.html"), (w) => w.document.querySelectorAll("#profileForm input").length >= 7, "Profile renders its fields"],
+      [P("profile.html"), (w) => w.document.getElementById("gestationPreview").innerHTML.includes("Week"), "Profile previews the week"],
+      [P("quiz.html"), (w) => w.document.querySelectorAll("#quizSteps .quiz-option").length === 24, "Baseline quiz renders every option"],
+      [P("crisis.html"), (w) => w.document.querySelectorAll('a[href^="tel:"]').length >= 3, "Urgent help lists phone numbers"],
+      [P("index.html"), (w) => w.document.querySelectorAll(".quick-link").length >= 6, "Home page lists the features"]
     ];
 
     for (const [file, fn, label] of renders) {
@@ -164,7 +211,7 @@ module.exports = {
 
     // ---------- assistant behaviour in a real page
     {
-      const { window } = await loadPage("assistant.html", seed());
+      const { window } = await loadPage(P("assistant.html"), seed());
       const log = window.document.getElementById("chatLog");
       window.HM.assistant.ask("how much caffeine can I have");
       t.check("assistant answers an everyday question", log.innerHTML.includes("Caffeine"));
@@ -178,7 +225,7 @@ module.exports = {
 
     // ---------- a full check-in, tapped through
     {
-      const { window } = await loadPage("checkin.html", null);
+      const { window } = await loadPage(P("checkin.html"), null);
       const doc = window.document;
       const wait = (ms) => new Promise((r) => setTimeout(r, ms));
       const scale = (i) => doc.querySelectorAll("#ciSteps .scale-btn")[i].click();
@@ -209,7 +256,7 @@ module.exports = {
 
     // ---------- the puzzle plays and persists
     {
-      const { window } = await loadPage("puzzle.html", seed());
+      const { window } = await loadPage(P("puzzle.html"), seed());
       const HM = window.HM;
       const answer = HM.puzzle.wordForDate(HM.dates.todayKey()).word;
       answer.split("").forEach((ch) => {
@@ -227,7 +274,7 @@ module.exports = {
 
     // ---------- the exported summary text
     {
-      const { window } = await loadPage("summary.html", seed());
+      const { window } = await loadPage(P("summary.html"), seed());
       const HM = window.HM;
       const state = HM.store.load();
       const range = HM.summary.resolveRange(state, "30");
@@ -245,7 +292,7 @@ module.exports = {
 
     // ---------- UC-P1 walking skeleton: every modeled participant is visited
     {
-      const { window } = await loadPage("summary.html", seed());
+      const { window } = await loadPage(P("summary.html"), seed());
       const HM = window.HM;
       t.check("UC-P1 step 9: summary request reaches the External AI Service (C.6) stub",
         HM.externalAIService && HM.externalAIService.isStub && HM.externalAIService.calls >= 1);
@@ -259,7 +306,7 @@ module.exports = {
 
     // ---------- profile editing and the theme toggle
     {
-      const { window } = await loadPage("profile.html", seed());
+      const { window } = await loadPage(P("profile.html"), seed());
       window.document.getElementById("pf-name").value = "Ada";
       window.document.getElementById("saveProfile").click();
       t.check("profile edits are saved",
@@ -270,7 +317,7 @@ module.exports = {
     }
 
     {
-      const { window } = await loadPage("app.html", seed());
+      const { window } = await loadPage(P("app.html"), seed());
       window.document.querySelector(".theme-toggle").click();
       const stamped = window.document.documentElement.getAttribute("data-theme");
       t.check("the theme toggle stamps the document", stamped === "dark" || stamped === "light", String(stamped));
