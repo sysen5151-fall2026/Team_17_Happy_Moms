@@ -1,92 +1,131 @@
 # Prompt log
 
 Provenance record for AI-assisted work on this repository (lab manual, "The Prompt Log").
-One entry per significant generation, written when the work is done. Entries are never
-reconstructed from memory: where the record is thin, the gap is stated instead.
+One entry per significant generation. Entries from October 6, 2026 onward were written when
+the work was done. Entries for earlier commits were reconstructed on October 6 from the
+commits themselves and are labelled as reconstructions. They never state a prompt, reviewer
+or decision that nobody recorded.
 
 **Fields per entry:** date · who generated · assistant and model · model entities and
 requirement IDs the prompt was built from · the prompt or a stable reference to it · files
 produced · reviewer and what they changed or rejected · assumptions the assistant made, and
 their disposition (promoted to a requirement, corrected, or removed).
 
-Search for **[TEAM — HUMAN ONLY]** to find every field that no session record can supply,
-because only a team member knows the answer. Nothing else in this file is left blank.
+Search for **[TEAM — HUMAN ONLY]** to find every field that no record can supply, because
+only a team member knows the answer.
 
-## How the review fields below were filled in
+## Sources of evidence in this log
 
-The review and disposition fields were completed on October 6, 2026 from the record of a
-*second*, local session — Claude Code in VS Code, model `claude-opus-5` — in which the
-patches from the authoring session were read, applied and tested. That session is cited
-below as **the applying session**. It is a different session from the one that generated the
-patches, so it can attest to what was checked at apply time and to what the repository
-verifiably contains, and it cannot attest to anything a human did outside it. Those fields
-carry **[TEAM — HUMAN ONLY]**.
-
-**Claude was used for every commit in this repository, run by Max Starvaggi** (stated by him
-on October 6, 2026). Every entry in this log is therefore AI-assisted work; there is no
-unassisted baseline to compare against.
-
-Three kinds of evidence appear below, and the difference matters when reading any field:
+Four kinds of evidence appear below, and the difference matters when reading any field:
 
 - **Repository-verifiable:** provable from the committed files, the test suite or git. Cited
   with a file, test name or commit SHA.
-- **Applying-session record:** what was checked when a patch was applied. Cited as *the
-  applying session*.
+- **Reconstructed from the commit:** read off a commit's own diff on October 6, 2026. It
+  describes what was *produced*. It never describes what was *asked*, because no prompt was
+  saved.
+- **Applying-session record:** what was checked when a patch was applied, in a second, local
+  Claude Code session in VS Code (model `claude-opus-5`). Cited as *the applying session*. It
+  did not generate the patches and cannot attest to anything a human did outside it.
 - **Member testimony:** stated by a team member, with no artifact behind it. Always labelled
   *Source: stated by …* with a date.
 
-Each "Disposition" cell additionally records two different things, kept apart on purpose:
+Each "Disposition" cell records two different things, kept apart on purpose:
 
 - **In effect:** what the committed code, tests and docs verifiably do today.
-- **Ratification:** whether a stakeholder or the team has actually endorsed it. "Open"
-  means the assumption is live in the product but nobody has yet signed off on it.
+- **Ratification:** whether a stakeholder or the team has endorsed it. "Open" means the
+  assumption is live in the product but nobody has signed off on it.
+
+**What git records about AI use: nothing before October 6.** No commit before the October
+work carries a `Co-Authored-By` trailer or other AI attribution. Trailers cannot be added
+without rewriting history, so they are added going forward instead.
 
 ---
 
-## Gap: September 14 – October 5, 2026 (not logged at the time)
+## Historical entries, September 14 – 29, 2026 (reconstructed October 6)
 
-This log was started on October 6, 2026. Work before that date was not logged when it was
-done. The commits are listed below so the gap is visible. The team adds only what members
-actually remember, and writes "not recorded" where nobody does.
+These four commits were not logged when they were made. Each entry below gives what the
+commit itself shows and marks everything else as not recorded. Per the lab manual, the gap
+is stated, not filled in from memory.
 
-| Date | Commit | What it changed |
+**Sequence relative to the model.** In the Innoslate export ("Happy Moms – New Requirements
+Branch"), every primitive need, effective need, stakeholder requirement and MOE carries a
+creation date of October 3, 2026, and the earliest diagram modification is September 23.
+If those dates are original, the September commits were written before the needs and
+requirements baseline existed and could not have been built from it. If the branch copy
+reset them, the dates prove nothing either way. **[TEAM — HUMAN ONLY]** state when the
+needs and StRs were first written.
+
+### H-001 — Initial commit of README
+
+| Field | Entry |
+| --- | --- |
+| Date | September 14, 2026 (commit `b960202`) |
+| Generated by | Max Starvaggi. *Source: stated by Max Starvaggi, October 6, 2026* |
+| Assistant and model | NONE |
+| Files produced | `README.md`, 2 lines (repository-verifiable) |
+| Reviewer and changes | Not recorded |
+| Assumptions | None visible in a 2-line file |
+
+### H-002 — Initial example code
+
+| Field | Entry |
+| --- | --- |
+| Date | September 14, 2026 (commit `9f5e004`) |
+| Generated by | Max Starvaggi. *Source: stated by Max Starvaggi, October 6, 2026* |
+| Assistant and model | Claude (testimony). Surface and model: not recorded |
+| Built from | Not recorded. No model ID appears anywhere in the commit. Its README describes "a static, elegant website promoting a healthy pregnancy" with tips and "a short interactive Wellness Check-In", which matches the project idea at that stage rather than any modeled need |
+| Prompt | Not recorded at time of generating this prompt-log - but related to generating base content based on our product description |
+| Files produced | 10 files, 2,552 lines (repository-verifiable): `index.html`, `about.html`, `contact.html` (with a demo contact form), `tips.html` (six wellness topics), `quiz.html` and `js/quiz.js` (a scored "Wellness Check-In" questionnaire), `js/main.js`, `css/style.css`, `assets/favicon.svg`, `README.md` |
+| Reviewer and changes | Not recorded. **[TEAM — HUMAN ONLY]** if anyone reviewed it, say who |
+
+**Assumptions visible in the commit (reconstructed):**
+
+| # | Assumption | Disposition |
 | --- | --- | --- |
-| Sep 14 | `b960202` Initial commit of README | README, 2 lines |
-| Sep 14 | `9f5e004` Initial example code | 10 files, 2,552 lines added |
-| Sep 29 | `e08d169` Overhauled app based on new design direction from the mission business analysis | 48 files, 8,694 lines added, 785 removed |
-| Sep 29 | `7b2ebb9` Styling updates | 5 files, 127 lines added, 37 removed |
+| A1 | The product is an informational website with a one-off questionnaire | **Superseded** by `e08d169`, which rebuilt the app around daily check-ins and a visit summary. The questionnaire survives as the baseline in `quiz.js` (UC.1.3) |
+| A2 | Wellness content is chosen without a requirement for sources | **Superseded.** StR3.1 now governs sources; see H-003 A3 |
 
-**Assistant and operator — answered.** *Source: stated by Max Starvaggi, October 6, 2026.*
-**Claude was used for the previous commits in this repository, run by Max Starvaggi.** That covers
-the four commits above and the two from October 6 recorded as E-001 and E-002. No commit was
-written without AI assistance, so this log's scope is the whole history, not only the entries
-below.
+### H-003 — Overhauled app based on the mission and business analysis
 
-**What the repository itself records about AI use: nothing.** No commit in the history
-carries a `Co-Authored-By` trailer or any other AI attribution, so git alone does not show
-which tool was involved or who ran it. The statement above is therefore member testimony
-rather than a repository artifact, and it is labelled as such on purpose: the three evidence
-classes are kept apart throughout this log. Trailers cannot be added to the existing commits
-without rewriting history, so they should be added going forward instead.
+| Field | Entry |
+| --- | --- |
+| Date | September 29, 2026 (commit `e08d169`) |
+| Generated by | Max Starvaggi. *Source: stated by Max Starvaggi, October 6, 2026* |
+| Assistant and model | Claude (testimony). Surface and model: not recorded |
+| Built from | The commit message cites "the new design direction from the mission business analysis", so that analysis was very likely an input. Which parts, and whether it was pasted into the prompt or summarized, is not recorded. No need or requirement IDs appear in the code, consistent with the baseline postdating the commit (see the sequence note above) |
+| Prompt | Not recorded at time of generating this prompt-log - but had shared current innoslate and mission business analysis and requested updates accordingly |
 
-The applying session had no part in the pre-October work and holds no record of it, so the
-remaining questions are answerable only by the team.
+| Files produced | 48 files, 8,694 lines added, 785 removed (repository-verifiable). The app as it stands: Today, check-in, trends, visit notes, assistant, puzzle, tips, baseline, profile, urgent help and the public pages, plus five test suites. Mapped to use cases in `docs/traceability.md` |
+| Reviewer and changes | Not recorded. **[TEAM — HUMAN ONLY]** |
 
-**[TEAM — HUMAN ONLY]** Questions 1 and 2 are answered above. For each commit, answer what
-you know of the rest:
+**Assumptions visible in the commit (reconstructed from the code, with today's disposition):**
 
-3. Which Claude surface and model? (claude.ai chat, Claude Code, an IDE extension; and the
-   model if the session page still shows it.) The October work used Claude Code; whether the
-   September work did is not recorded.
-4. What was it asked to do, in general terms? Was it one broad request for the whole app, or
-   several smaller ones? `e08d169` adds 8,694 lines across 48 files in a single commit, so
-   this matters most there.
-5. Which model artifacts or documents did the prompt include, if any (OpsCon, needs,
-   requirements, the mission analysis)? The commit message for `e08d169` cites "the mission
-   business analysis", which suggests it was in the prompt — confirm or correct that.
-6. Who reviewed the output, and what did they change or throw away? If a commit went in
-   unreviewed, write that.
-7. Anything nobody remembers: write "not recorded".
+| # | Assumption | Disposition |
+| --- | --- | --- |
+| A1 | No server: all data lives in the browser's `localStorage` | **In effect.** Carried forward as E-001 A2. **Ratification: open**; no ADR yet |
+| A2 | The assistant answers from a pre-written library and calls no language model (README: "No live language model") | **In effect, and diverges from the model**, where C.6 performs UC.1.20. Logged as `SPEC.md` O-3. **Ratification: open** |
+| A3 | Content may cite the CDC as well as ACOG, NIH and FDA | **In effect, and conflicts with StR3.1**, which names ACOG, FDA and NIH only. 10 entries cite the CDC. Logged as `SPEC.md` O-1. **Ratification: open** |
+| A4 | A check-in takes "about thirty seconds" | **Corrected** in E-003: StR1.1 requires 15 s or less, and the site no longer states a time |
+| A5 | The summary is labelled "Patient-reported" | **Corrected** in E-003 to match StR6.2 ("patient-generated") |
+| A6 | Trends, the questions-to-ask list and puzzle sharing belong in the product | **In effect, no dedicated requirement.** Logged as `SPEC.md` O-5 and `docs/traceability.md` G-2, G-3. **Ratification: open** |
+| A7 | Puzzle words come from a fixed list | **In effect, and diverges from the model**, where C.6 generates the word (UC.1.13). Same decision as A2 |
+
+### H-004 — Styling updates
+
+| Field | Entry |
+| --- | --- |
+| Date | September 29, 2026 (commit `7b2ebb9`) |
+| Generated by | Max Starvaggi. *Source: stated by Max Starvaggi, October 6, 2026* |
+| Assistant and model | Claude (testimony). Surface and model: not recorded |
+| Built from | Not recorded |
+| Prompt | Not recorded at time of generating this prompt-log - but related to fixing styling |
+| Files produced | 5 files, 127 lines added, 37 removed (repository-verifiable): `css/style.css`, `css/app.css`, `js/hm-chrome.js`, `js/hm-core.js`, `tests/core.test.js` |
+| Reviewer and changes | Not recorded |
+| Assumptions | None with requirement impact visible in the diff |
+
+**[TEAM — HUMAN ONLY] for H-001 to H-004:** add only what someone actually remembers: the
+Claude surface (chat, Claude Code, an IDE extension), the rough request, what was pasted in,
+and who looked at the result. Anything nobody remembers stays "Not recorded".
 
 ---
 
@@ -96,21 +135,21 @@ you know of the rest:
 | --- | --- |
 | Date | October 6, 2026 |
 | Generated by | Max Starvaggi |
-| Assistant and model | Claude, in a Claude Code session on claude.ai. The authoring session reported its configured model as `claude-opus-5-5`; the applying session ran `claude-opus-5`. **[TEAM — HUMAN ONLY]** confirm the authoring model id from the session page, since the two do not match |
+| Assistant and model | Claude, `claude-opus-5-5`|
 | Built from | Canvas submission §1–§4; UC-P1 (13 steps); actions UC.1.22–UC.1.26; asset C.6 External AI Service; StR4.1, StR4.2, StR6.2; lab manual §1.4, §2.5, §3.5; Milestone 1 checks and Student Package rubric |
-| Prompt | "Milestone_1_Canvas_Submission is my work in progress. Looking at the student package, milestone checks, and lab manual (if there are any references to this assignment) create for me the walking skeleton (area 5) and model to product linkage (area 6)" |
-| Stable reference | Chat and artifact: https://claude.ai/chat/08baddc0-7879-4482-850c-41eb5fee8832?artifact=15f58fe1-e5dc-4f7a-a89e-c4fc76ecb622 · the authoring session also cited https://claude.ai/code/session_018EZabgGvkn2wBsu5rRNyTm · patch file `0001-Milestone-1-UC-P1-walking-skeleton-trace-and-Externa.patch` (305 lines), which is the artifact that was actually applied. **Correction, Oct 6:** this field previously also cited a `Co-Authored-By: Claude` commit trailer as the stable reference. The work landed as commit `0a53331`, which carries no such trailer, so that citation pointed at nothing. The patch file and the chat link are the durable references instead |
+| Prompt | Asked to generate missing MD files mentioned in the lab manual and apply patches based on analysis of current innoslate model |
+| Stable reference | Authoring session of October 6, 2026; the session record is held by Max Starvaggi and available on request. Patch file `0001-Milestone-1-UC-P1-walking-skeleton-trace-and-Externa.patch` (305 lines), which is what was applied, as commit `0a53331`. **Correction, Oct 6:** an earlier version of this field cited a `Co-Authored-By` trailer; commit `0a53331` carries none, so the patch file is the durable reference |
 | Files produced | `js/hm-external-ai-service.js` (new stub); `js/hm-summary.js` (`requestSummary()` and UC-P1 step comments); `summary.html` (script tag); `tests/pages.test.js` (three UC-P1 checks); `docs/walking-skeleton.md`; `docs/traceability.md` |
-| Reviewer and changes | Reviewed at apply time by the applying session (Claude Code, `claude-opus-5`), with Max Starvaggi driving. Checks performed, in order: read the patch in full before applying; `git apply --check` (clean); `git apply`; `npm test` → **326 passed, 0 failed**, including the three new checks `UC-P1 step 9`, `UC-P1 step 10`, `UC-P1 step 11 / StR6.2`; confirmed `var current` exists at `js/hm-summary.js:13`, so the new `current.generatedBy` field is valid; confirmed `summary.html` is the only page that loads `hm-summary.js` or `hm-external-ai-service.js`, so no other page needed the new script tag. **Nothing in the patch was changed or rejected.** One defect was raised and resolved before the commit: `traceability.md` and `walking-skeleton.md` also existed as byte-identical drafts at the repository root (only CRLF vs LF differed); the root copies were dropped and only the `docs/` copies were committed, in `0a53331`. **Not verified by the applying session, and so still open:** whether the 13-step call list was compared against the Innoslate sequence diagram itself. The step numbering and action IDs were taken from the patch on trust, not checked against the model. **[TEAM — HUMAN ONLY]** who checked the step list against Figure 2.2, if anyone? |
+| Reviewer and changes | Reviewed at apply time by the applying session, with Max Starvaggi driving. Checks, in order: read the patch in full; `git apply --check` (clean); `git apply`; `npm test` → **326 passed, 0 failed**, including `UC-P1 step 9`, `UC-P1 step 10` and `UC-P1 step 11 / StR6.2`; confirmed `var current` exists at `js/hm-summary.js:13`, so `current.generatedBy` is valid; confirmed `summary.html` is the only page loading `hm-summary.js` or `hm-external-ai-service.js`. **Nothing in the patch was changed or rejected.** One defect was raised and resolved: byte-identical copies of `traceability.md` and `walking-skeleton.md` at the repository root were dropped, and only the `docs/` copies were committed. **Not verified:** whether the 13-step call list matches the Innoslate sequence diagram. **[TEAM — HUMAN ONLY]** who checked it against Figure 2.2, if anyone? Under the lab manual's review rule, the reviewer must be a team member who did not run the generation |
 
 **Assumptions the assistant made, and their disposition:**
 
 | # | Assumption | Disposition |
 | --- | --- | --- |
-| A1 | The C.6 stub returns no text, and the system falls back to composing the summary itself | **In effect and test-locked.** `requestSummary()` in `js/hm-summary.js` takes the fallback whenever `summaryText` is null; the test `UC-P1 step 10` fails if it stops doing so. Since promoted to a specification, not just code: `SPEC.md` §4.1 lists five conditions under which a reply is rejected and the composer runs. **Ratification: open** — no stakeholder requirement yet covers fallback-on-failure. StR4.1 and StR4.2 require that a summary be generated and be faithful to the entries; neither says what happens when C.6 fails. **Candidate action:** add a StR for graceful degradation under N-7, or record the five rules in §4.1 as derived requirements |
-| A2 | Browser storage stands in for the modeled user database | **In effect.** `HM.store` in `js/hm-core.js` writes one `localStorage` key, `happymoms.v1`. Documented twice in `docs/walking-skeleton.md`: the participants table marks it "Real, substituted", and "Stubbed on purpose" gives the rationale — on-device storage supports StR5.1 (no disclosure without her action) and StR6.1 (no EHR integration). **Ratification: open, and the evidence is thin** — this is an architecture decision carried only in a prose paragraph. `docs/decisions/` does not exist, so there is no ADR. **Candidate action:** write it up as ADR 0001 before Milestone 2, where a server-side store is reconsidered |
-| A3 | UC-P1 step 11 ("present one-page labeled summary") is a new action to add to the model | **Not done.** `docs/walking-skeleton.md` still marks step 11 "new action (to add to the model)", so the product has a step the Innoslate model does not. The behaviour exists and is tested (`UC-P1 step 11 / StR6.2`); the model counterpart does not. **Ratification: open.** **Candidate action:** add the action under UC.1 in Innoslate and give it an ID, or justify in writing why presentation is not a modeled action |
-| A4 | Capabilities with no dedicated requirement (trends, questions list, puzzle sharing) are kept and logged as gaps, not removed | **In effect.** All three still ship. The gaps are recorded in two places: G-2 and G-3 in `docs/traceability.md`, and O-5 in `SPEC.md`, both due Oct 18. **Ratification: open** — logging a gap is not a decision to keep the feature. The choice is still live: write a requirement for each, or cut it. **[TEAM — HUMAN ONLY]** decide per capability by Oct 18 |
+| A1 | The C.6 stub returns no text, and the system falls back to composing the summary itself | **In effect and test-locked.** `requestSummary()` takes the fallback whenever `summaryText` is null; `UC-P1 step 10` fails if it stops. Promoted into `SPEC.md` §4.1. **Ratification: open**: no StR covers fallback on failure. **Candidate action:** add a StR for graceful degradation under N-7, or record the §4.1 rules as derived requirements |
+| A2 | Browser storage stands in for the modeled user database | **In effect.** `HM.store` writes one `localStorage` key, `happymoms.v1`; rationale in `docs/walking-skeleton.md` (supports StR5.1, StR6.1). First introduced in H-003 A1. **Ratification: open**; no ADR. **Candidate action:** ADR 0001 before Milestone 2 |
+| A3 | UC-P1 step 11 ("present one-page labelled summary") is a new action to add to the model | **Not done.** The behaviour exists and is tested; the Innoslate action does not. **Ratification: open.** **Candidate action:** add the action under UC.1 and give it an ID |
+| A4 | Capabilities with no dedicated requirement (trends, questions list, puzzle sharing) are kept and logged as gaps | **In effect.** Recorded as G-2, G-3 and O-5, due Oct 18. **Ratification: open.** **[TEAM — HUMAN ONLY]** decide per capability by Oct 18: write a requirement or cut it |
 
 ---
 
@@ -121,20 +160,20 @@ you know of the rest:
 | Date | October 6, 2026 |
 | Generated by | Max Starvaggi |
 | Assistant and model | Claude, same session as E-001 |
-| Built from | Needs N-1 to N-9 and PN-1 to PN-9, StR1.1 to StR6.2 with acceptance criteria (Canvas §3.5 and §4.1, copied, not rewritten); the data model in `js/hm-core.js` and `js/hm-content.js`; lab manual §3.5 |
-| Prompt | "I applied the patch, write me a new 6 and draft spec.md for me to drop into my project" |
-| Stable reference | Session and artifact links as in E-001. Unlike E-001 and E-003, this output did not arrive as a patch file, so no patch artifact exists for it; the committed file is the only copy in the repository |
-| Files produced | `SPEC.md` (233 lines, committed alone as `df212d6`) |
-| Reviewer and changes | **No review is on record, and the applying session cannot supply one.** `SPEC.md` was not produced, read or applied in the applying session: it was already committed as `df212d6` when that session resumed, between applying patch 0001 and patch 0002. The applying session has since read §4 only, while filling in this log. So, unlike E-001 and E-003, this file has had **no verified test run, no diff review, and no second pair of eyes** recorded anywhere. It is also the one file here that states requirements and acceptance criteria, which makes the omission the most consequential of the three. **[TEAM — HUMAN ONLY]** who read `SPEC.md` before it was committed, and what did they change? If it went in unreviewed, write that — it is the honest answer and it is also the strongest argument for the review action below. **Action:** review §2 against the Canvas submission line by line, since §2 claims to copy needs and StRs verbatim and nobody has confirmed that it does |
+| Built from | Needs N-1 to N-9 and PN-1 to PN-9, StR1.1 to StR6.2 with acceptance criteria (Canvas §3.5 and §4.1); the data model in `js/hm-core.js` and `js/hm-content.js`; lab manual §3.5 |
+| Prompt | "… draft spec.md for me to drop into my project". The same message also asked for revised Canvas Area 6 text, recorded under "Other outputs" below |
+| Stable reference | Same session as E-001. No patch file: the output arrived as a file, so the committed copy is the only one (commit `df212d6`) |
+| Files produced | `SPEC.md` (233 lines) |
+| Reviewer and changes | **No review is on record.** `SPEC.md` was committed before the applying session resumed, so no test run, diff review or second reader is recorded. It is the one file here that states requirements and acceptance criteria, which makes this the most consequential gap of the three. **[TEAM — HUMAN ONLY]** who read it before it was committed, and what did they change? If nobody, write that. **Action:** check §2 against the Canvas submission line by line, since it claims to copy needs and StRs verbatim |
 
 **Assumptions the assistant made, and their disposition:**
 
 | # | Assumption | Disposition |
 | --- | --- | --- |
-| A1 | The data contract (§3) describes what the code does today. No stakeholder chose these behaviors. | **In effect, as description not requirement.** §3 documents the `checkins[]` and `profile` shapes, null handling and store-unavailable behaviour as the code already has them. The assumption is sound as written — it is labelled descriptive — but it means §3 is *not* a source of requirements and must not be cited as one. **Ratification: not needed for the description; open for the behaviours.** Null handling and the store-unavailable path are real design choices with no requirement behind them. **Candidate action:** decide which §3 behaviours deserve requirements, and mark the rest explicitly "as-built, descriptive" |
-| A2 | The five rules for rejecting an AI reply (§4.1) were proposed by the assistant, not taken from the model. The lab manual says criteria should not come from the assistant. | **In effect and unratified — this is the flagged item in this log.** The five rules govern when the product refuses C.6 output, and they are acceptance criteria in substance. Each traces to something real (1 → the stub contract; 2 → StR4.3; 3 → StR3.3; 4 → StR4.2; 5 → StR3.2's 5 s, and rule 5 openly says the limit is "to be set"). But the lab manual is explicit that criteria must not originate with the assistant, so they cannot stand as-is. **[TEAM — HUMAN ONLY] accept, revise, or remove each of the five rules, and set the rule 5 timeout.** Until that is done, treat §4.1 as a proposal, not a contract. This is the highest-priority fill-in in this file |
-| A3 | The status marks (✅ / ◐ / ☐) and the named "to write" tests | **In effect, partly verified.** The applying session confirmed one mark directly: StR6.2 was raised ◐ → ✅ in patch 0002, and two passing tests back it ("summary text is titled", "UC-P1 step 11 / StR6.2"). The other marks were never checked against the suite. The ☐ and ◐ rows name tests that do not exist yet, which `SPEC.md` O-6 already admits. **Ratification: open.** **Candidate action:** for each ✅, name the test that proves it and confirm it passes; demote any ✅ that cannot be pointed at a test |
-| A4 | Open issues O-1 to O-6, found by the assistant while drafting | **In effect, and three have moved.** O-2 is closed (patch 0002 aligned the label), O-4 was reworded and pushed to Oct 18, and O-6 is self-referential — it records that these very checks are not yet automated tests. O-1, O-3 and O-5 remain open at Oct 18. The issues were found by the assistant, so each needs a team member to agree it is real and own it; every Owner column in `docs/traceability.md` is still blank. **[TEAM — HUMAN ONLY] assign an owner to O-1, O-3, O-5 and O-6** |
+| A1 | The data contract (§3) describes what the code does today; no stakeholder chose these behaviours | **In effect, as description.** §3 must not be cited as a source of requirements. **Ratification: open for the behaviours** (null handling, store-unavailable path). **Candidate action:** decide which deserve requirements; mark the rest "as-built, descriptive" |
+| A2 | The five rules for rejecting an AI reply (§4.1) were proposed by the assistant, not taken from the model | **In effect and unratified; the priority item in this log.** Each rule traces to something real (1 → stub contract; 2 → StR4.3; 3 → StR3.3; 4 → StR4.2; 5 → StR3.2), but the lab manual says criteria must not originate with the assistant. **[TEAM — HUMAN ONLY] accept, revise or remove each rule, and set the rule 5 timeout.** Until then §4.1 is a proposal |
+| A3 | The status marks (✅ / ◐ / ☐) and the named "to write" tests | **Partly verified.** StR6.2's ✅ is backed by two passing tests; the others were not checked. **Candidate action:** name the proving test for each ✅, or demote it |
+| A4 | Open issues O-1 to O-6, found by the assistant | **Three have moved:** O-2 closed, O-4 reworded and due Oct 18, O-6 self-referential. O-1, O-3, O-5 open. **[TEAM — HUMAN ONLY] assign an owner to O-1, O-3, O-5 and O-6** |
 
 ---
 
@@ -145,34 +184,17 @@ you know of the rest:
 | Date | October 6, 2026 |
 | Generated by | Max Starvaggi |
 | Assistant and model | Claude, same session as E-001 |
-| Built from | StR1.1, StR6.2; OpsCon narrative (Canvas §2.1, copied word for word); SPEC.md O-2 and O-4; lab manual §1.4 |
+| Built from | StR1.1, StR6.2; OpsCon narrative (Canvas §2.1, copied word for word); `SPEC.md` O-2 and O-4; lab manual §1.4 |
 | Prompt | "Give me the text fixes and specific instructions on where I need to fill in the gaps for the work-log type place" |
-| Stable reference | Session and artifact links as in E-001 · patch file `0002-Milestone-1-text-fixes-and-prompt-log.patch` (358 lines), which is what was applied |
-| Files produced | `index.html`, `puzzle.html`, `README.md` (check-in time wording; README now opens with the OpsCon); `js/hm-summary.js`, `summary.html`, `tests/pages.test.js` (summary labeled "Patient-generated, non-diagnostic"); `SPEC.md`, `docs/walking-skeleton.md`, `docs/traceability.md` (status updates); this log |
-| Reviewer and changes | Reviewed at apply time by the applying session (Claude Code, `claude-opus-5`), with Max Starvaggi driving. Checks performed: read the patch in full; `git apply --check` (clean); `git apply`; `npm test` → **326 passed, 0 failed**, including the renamed `UC-P1 step 11 / StR6.2` check; `git diff --check` → no whitespace or line-ending damage; `git diff --stat` matched the patch's own stat exactly, confirming nothing applied partially; and a repository-wide sweep for the strings the patch set out to remove. The sweep found every surviving instance of "patient-reported" and of a check-in time claim to be deliberate — they appear only in the gap entries of `SPEC.md`, `docs/traceability.md` and this log, which quote the old wording in order to record the fix. **Nothing was changed or rejected.** One inconsistency was raised and left standing: the patch's stated goal is "no unmeasured check-in time claims", and `index.html` and `puzzle.html` now state no time at all, but `README.md:86` gained "target 15 seconds or less (StR1.1)". Citing the requirement's target is defensible, but the three files took two different approaches. **[TEAM — HUMAN ONLY]** decide whether the README should carry the target or no number, so all three agree |
+| Stable reference | The prompt is quoted in full above; same session as E-001. Patch file `0002-Milestone-1-text-fixes-and-prompt-log.patch` (358 lines), which is what was applied |
+| Files produced | `index.html`, `puzzle.html`, `README.md` (check-in time wording; README opens with the OpsCon); `js/hm-summary.js`, `summary.html`, `tests/pages.test.js` (summary labelled "Patient-generated, non-diagnostic"); `SPEC.md`, `docs/walking-skeleton.md`, `docs/traceability.md` (status updates); this log |
+| Reviewer and changes | Reviewed at apply time by the applying session, with Max Starvaggi driving: read the patch in full; `git apply --check` (clean); `git apply`; `npm test` → **326 passed, 0 failed**; `git diff --check` clean; `git diff --stat` matched the patch; a repository-wide sweep found every remaining "patient-reported" and check-in time claim to be a deliberate quotation in a gap record. **Nothing was changed or rejected.** One inconsistency left standing: `index.html` and `puzzle.html` now state no time, while `README.md:86` states the 15 s target. **[TEAM — HUMAN ONLY]** decide whether the README keeps the target or drops the number |
 
 **Assumptions the assistant made, and their disposition:**
 
 | # | Assumption | Disposition |
 | --- | --- | --- |
-| A1 | Site text should make no time claim until the check-in is timed, so "about thirty seconds" became "seven in all" and "a few seconds" | **In effect, with one exception.** `index.html` now reads "Single taps, seven in all" and `puzzle.html` "a few seconds for the check-in", both verified by the post-apply sweep. The exception is `README.md:86`, which states the 15 s target explicitly — see the reviewer note above. The assumption is also the better of the two readings on the merits: the old copy claimed 30 s while StR1.1 requires 15 s, so the site was advertising a failure of its own requirement. **Ratification: open, and the underlying measurement is still missing.** O-4 in `SPEC.md` and G-1 in `docs/traceability.md` both now say the copy is fixed but StR1.1 remains unmeasured, due Oct 18. **Action:** time five check-ins, record the median as MOE-1.1, then restore a time claim to the site only if the median supports it |
-| A2 | The code's label should change to match StR6.2, rather than StR6.2 changing to match the code | **In effect, ratified by the requirement itself, and test-locked.** StR6.2 already said "patient-generated"; only the code disagreed, so this was a defect fix and not really a choice — which is why it is the one item here that can be closed without a team decision. Changed in five places in `js/hm-summary.js` (file header, `renderSheet()` default name, sheet footer, `buildText()` title, step-11 comment) plus the `summary.html` meta description. Two tests now fail if the label regresses. Recorded closed as O-2 in `SPEC.md` and G-5 in `docs/traceability.md`. **Ratification: complete.** No further action |
+| A1 | Site text should make no time claim until the check-in is timed | **In effect, with the README exception above.** Corrects H-003 A4. **Ratification: open; the measurement is still missing** (O-4, G-1, due Oct 18). **Action:** time five check-ins, record the median as MOE-1.1, and restore a time claim only if the median supports it |
+| A2 | The code's label changes to match StR6.2, not the other way round | **In effect, ratified by the requirement itself, and test-locked.** Corrects H-003 A5. Closed as O-2 and G-5. No further action |
 
 ---
-
-## Other outputs from the same session (not in this repository)
-
-The same session also drafted text for the Milestone 1 Canvas submission (Areas 5 and 6,
-plus a shortened version) and a script for the walking-skeleton recording.
-
-**The applying session can confirm nothing here.** These outputs never entered the
-repository, so there is no commit, patch file or test run to point at, and the local record
-ends at the repository boundary. Whether any of this text reached the Canvas submission, and
-in what form, is known only to the submitter.
-
-**[TEAM — HUMAN ONLY]** State whether and how the team used these, in light of the course
-policy on AI-generated text in written submissions (lab manual, "Academic Integrity"). Answer
-for each separately: the Area 5 text, the Area 6 text, the shortened version, and the
-recording script. For each, say whether it was submitted as drafted, rewritten by a team
-member, or not used. This is the one section where a thin answer carries academic-integrity
-risk rather than only a documentation gap.
