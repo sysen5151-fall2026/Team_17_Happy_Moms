@@ -272,6 +272,38 @@ window.HM = window.HM || {};
     });
   }
 
+  function renderAccount() {
+    var host = document.getElementById("accountBlock");
+    var user = HM.auth && HM.auth.current();
+    if (!host || !user) return;
+
+    host.innerHTML = "";
+    host.appendChild(dataItem(
+      user.name || "Signed in",
+      "Signed in as " + user.email + ". Your entries are kept separate from anyone else who uses this browser.",
+      "Log out",
+      function () {
+        HM.auth.logOut();
+        HM.navigate("login.html?out=1");
+      }
+    ));
+    host.appendChild(dataItem(
+      "Delete my account",
+      "Removes this account and every entry saved under it. This cannot be undone.",
+      "Delete account",
+      function () {
+        var ok = window.confirm(
+          "Delete your Happy Moms account?\n\n" +
+          "Your login, profile, check-ins, questions, and puzzle history will be removed from this browser. This cannot be undone."
+        );
+        if (!ok) return;
+        HM.auth.deleteAccount();
+        HM.navigate("login.html");
+      },
+      true
+    ));
+  }
+
   function renderTheme(state) {
     var host = document.getElementById("themeChoice");
     host.innerHTML = "";
@@ -298,6 +330,7 @@ window.HM = window.HM || {};
 
   function render() {
     var state = HM.store.load();
+    renderAccount();
     renderForm(state);
     previewGestation();
     renderBaseline(state);

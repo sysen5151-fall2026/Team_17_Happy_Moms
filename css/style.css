@@ -1226,12 +1226,12 @@ form.contact-form {
   }
 }
 
-/* The app shell carries eight links to the site shell's four, and measuring the
-   rendered header puts its limit at 1280px against roughly 900px for the site.
+/* The app shell carries nine links to the site shell's four, and measuring the
+   rendered header puts its limit at 1560px against roughly 900px for the site.
    So the app shell folds into the drop-down menu first; the 760px block below
    repeats these panel styles for every shell at phone widths. Both blocks must
    stay in step. */
-@media (max-width: 1279px) {
+@media (max-width: 1559px) {
   body[data-shell="app"] .nav-links {
     position: absolute;
     top: 100%;

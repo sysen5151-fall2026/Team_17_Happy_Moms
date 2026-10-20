@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Postpartum Depression — Happy Moms</title>
+  <meta name="description" content="A ten-question mood check about the past seven days, using the Edinburgh Postnatal Depression Scale. Results stay in this browser." />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <meta name="theme-color" content="#c98a93" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/app.css" />
+  <script src="../js/hm-config.js"></script>
+  <script src="../js/hm-auth.js"></script>
+  <script src="../js/hm-core.js"></script>
+  <script src="../js/hm-chrome.js"></script>
+</head>
+<body data-shell="app" data-page="mood" data-root="../">
+
+  <header id="siteHeader"></header>
+
+  <main class="app-main narrow">
+    <div class="app-head">
+      <div>
+        <h1>Postpartum Depression</h1>
+        <p>Depression can start during pregnancy or in the year after birth, and it's common
+           and treatable. This mood check is ten questions about how you've felt in the past
+           7 days. It takes about two minutes.</p>
+      </div>
+    </div>
+
+    <section class="ci-shell" id="mcShell">
+      <div id="mcIntro" class="mc-view">
+        <h2 class="ci-question">How have you been feeling lately?</h2>
+        <p class="ci-hint">Pregnancy and the months after birth can bring big changes in mood.
+          This check helps you notice how you've been doing, so you can bring it up with your
+          provider. It doesn't diagnose anything.</p>
+        <ul class="mc-points">
+          <li>Pick the answer closest to how you've felt over the <strong>past 7 days</strong>.</li>
+          <li>Your answers are saved in this browser under your account. Nobody else sees them
+            unless you share them yourself.</li>
+          <li>If you ever have thoughts of harming yourself, you don't need to finish: call or text
+            <a href="tel:988">988</a>, or open <a href="crisis.html">urgent help</a>.</li>
+        </ul>
+        <div class="row">
+          <button type="button" class="btn btn-primary" id="mcStart">Start the mood check</button>
+          <a class="btn btn-quiet" href="app.html">Not now</a>
+        </div>
+        <div id="mcHistory" class="mc-history" hidden></div>
+      </div>
+
+      <div id="mcForm" class="mc-view" hidden>
+        <div class="ci-progress">
+          <span class="ci-progress-label" id="mcProgressLabel">Question 1 of 10</span>
+          <div class="ci-progress-track">
+            <div class="ci-progress-bar" id="mcBar"></div>
+          </div>
+        </div>
+        <p class="tile-label" style="margin:0 0 6px">In the past 7 days</p>
+        <div id="mcStep"></div>
+        <div class="ci-nav">
+          <button type="button" class="btn btn-quiet btn-sm" id="mcBack">Back</button>
+        </div>
+      </div>
+
+      <div id="mcUrgent" class="mc-view mc-urgent" hidden role="alert">
+        <h2>You don't have to wait</h2>
+        <p>You said the thought of harming yourself has come up. That's important, and help is
+          available right now, any time of day.</p>
+        <ul class="mc-contacts" id="mcContacts"></ul>
+        <p class="small">If you or your baby are in immediate danger, call 911.</p>
+        <div class="row">
+          <button type="button" class="btn btn-quiet" id="mcContinue">Continue to my results</button>
+          <a class="btn btn-quiet" href="crisis.html">Open urgent help</a>
+        </div>
+      </div>
+
+      <div id="mcResult" class="mc-view" hidden>
+        <p class="tile-label" style="margin:0 0 6px">Your mood check</p>
+        <h2 class="ci-question" id="mcResultTitle"></h2>
+        <p id="mcResultBody"></p>
+        <div class="mc-score" id="mcScore"></div>
+        <div class="row">
+          <a class="btn btn-primary" href="app.html">Back to today</a>
+          <a class="btn btn-quiet" href="crisis.html">Urgent help</a>
+          <button type="button" class="btn btn-quiet" id="mcAgain">Review my answers</button>
+        </div>
+        <p class="small muted" style="margin:18px 0 0">Postpartum Support International helpline:
+          <a href="tel:18009444773">1-800-944-4773</a> (call or text, English and Spanish).</p>
+      </div>
+    </section>
+
+    <section class="panel mc-panel" id="aboutYou">
+      <div class="panel-head"><h2>About you</h2></div>
+      <p class="panel-sub">Research links a few other things to depression after birth, such as earlier
+        depression, support at home, and a hard year. Answer what you're comfortable with. Answers save
+        as you tap, and you can change them any time.</p>
+      <div id="riskForm" class="risk-form"></div>
+      <p class="small muted" id="riskSaved" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" id="predictionInputs">
+      <div class="panel-head"><h2>What the prediction uses</h2></div>
+      <p class="panel-sub">Twelve inputs, taken from your mood checks, your answers above, and your daily
+        check-ins. Only information from before your baby's birth is used. None of this is a diagnosis.</p>
+      <div class="inputs-wrap">
+        <table class="inputs-table" id="inputsTable">
+          <thead><tr><th scope="col">Input</th><th scope="col">Value</th><th scope="col">From</th><th scope="col">Linked to</th></tr></thead>
+          <tbody id="inputsBody"></tbody>
+        </table>
+      </div>
+      <p class="small muted" id="inputsMeta" style="margin:12px 0 0"></p>
+    </section>
+
+    <p class="small muted" style="margin-top:22px" id="mcCitation">
+      Questions from the Edinburgh Postnatal Depression Scale (EPDS). Cox JL, Holden JM,
+      Sagovsky R. <em>Br J Psychiatry</em> 1987;150:782–6. A screening tool, not a diagnosis.
+    </p>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="../js/hm-content.js"></script>
+  <script src="../js/hm-screening.js"></script>
+  <script src="../js/hm-moodcheck.js"></script>
+  <script src="../js/hm-risk.js"></script>
+  <script src="../js/hm-riskform.js"></script>
+</body>
+</html>

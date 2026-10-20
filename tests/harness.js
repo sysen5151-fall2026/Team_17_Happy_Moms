@@ -12,6 +12,8 @@ const MODULE_ORDER = [
   "hm-config",
   "hm-core",
   "hm-content",
+  "hm-screening",
+  "hm-risk",
   "hm-charts",
   "hm-insights",
   "hm-sample",

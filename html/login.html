@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log in — Happy Moms</title>
+  <meta name="description" content="Log in to Happy Moms, or create an account. Your account and your check-ins stay in this browser on this device." />
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg" />
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <meta name="theme-color" content="#c98a93" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/app.css" />
+  <script src="../js/hm-config.js"></script>
+  <script src="../js/hm-auth.js"></script>
+  <script src="../js/hm-core.js"></script>
+  <script src="../js/hm-chrome.js"></script>
+</head>
+<body data-shell="site" data-page="login" data-root="../">
+
+  <header id="siteHeader"></header>
+
+  <main class="app-main auth-main">
+    <section class="panel auth-card">
+      <div id="authSignedIn" hidden>
+        <h1>You are signed in</h1>
+        <p class="panel-sub" id="authWho"></p>
+        <div class="row">
+          <a class="btn btn-primary" id="authContinue" href="app.html">Continue to the app</a>
+          <button type="button" class="btn btn-quiet" id="authSwitch">Log out</button>
+        </div>
+      </div>
+
+      <div id="authForms">
+        <h1 id="authTitle">Welcome back</h1>
+        <p class="panel-sub" id="authLede">Log in to see your check-ins, trends, and visit notes.</p>
+
+        <div class="metric-switch auth-tabs" role="tablist" aria-label="Log in or create an account">
+          <button type="button" class="metric-btn active" role="tab" id="tabLogin"
+                  aria-selected="true" aria-controls="loginForm">Log in</button>
+          <button type="button" class="metric-btn" role="tab" id="tabSignup"
+                  aria-selected="false" aria-controls="signupForm">Create account</button>
+        </div>
+
+        <div class="banner banner-alert auth-error" id="authError" role="alert" hidden></div>
+        <div class="banner banner-ok auth-error" id="authNotice" role="status" hidden></div>
+
+        <form id="loginForm" role="tabpanel" aria-labelledby="tabLogin" novalidate>
+          <div class="field">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" name="email" autocomplete="username" required />
+          </div>
+          <div class="field">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" name="password" autocomplete="current-password" required />
+          </div>
+          <label class="auth-check">
+            <input type="checkbox" id="loginRemember" name="remember" />
+            Keep me signed in on this device
+          </label>
+          <button type="submit" class="btn btn-primary auth-submit">Log in</button>
+        </form>
+
+        <form id="signupForm" role="tabpanel" aria-labelledby="tabSignup" novalidate hidden>
+          <div class="field">
+            <label for="signupName">What should we call you?</label>
+            <input type="text" id="signupName" name="name" autocomplete="given-name" placeholder="First name" />
+          </div>
+          <div class="field">
+            <label for="signupEmail">Email</label>
+            <input type="email" id="signupEmail" name="email" autocomplete="username" required />
+          </div>
+          <div class="field">
+            <label for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" name="password" autocomplete="new-password"
+                   minlength="8" required aria-describedby="signupPasswordHint" />
+            <p class="field-hint" id="signupPasswordHint">At least 8 characters.</p>
+          </div>
+          <div class="field">
+            <label for="signupConfirm">Confirm password</label>
+            <input type="password" id="signupConfirm" name="confirm" autocomplete="new-password" required />
+          </div>
+          <label class="auth-check">
+            <input type="checkbox" id="signupRemember" name="remember" />
+            Keep me signed in on this device
+          </label>
+          <button type="submit" class="btn btn-primary auth-submit">Create account</button>
+        </form>
+
+        <p class="small muted auth-note">
+          Your account lives in this browser only. Nothing is sent to a server, so there is no
+          password reset: if you forget it, your entries cannot be recovered. Export a backup
+          from your profile now and then.
+        </p>
+      </div>
+    </section>
+
+    <p class="center small muted auth-urgent">
+      Need help right now? <a href="crisis.html">Urgent help</a> is always open, no login needed.
+    </p>
+  </main>
+
+  <footer id="siteFooter"></footer>
+
+  <script src="../js/hm-login.js"></script>
+</body>
+</html>

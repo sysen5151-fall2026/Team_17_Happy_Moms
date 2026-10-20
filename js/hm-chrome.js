@@ -131,6 +131,7 @@ window.HM = window.HM || {};
     { page: "summary", file: "summary.html", label: "Visit notes", icon: "notes" },
     { page: "assistant", file: "assistant.html", label: "Assistant", icon: "chat" },
     { page: "puzzle", file: "puzzle.html", label: "Daily puzzle", icon: "grid" },
+    { page: "mood", file: "mood-check.html", label: "Postpartum Depression", icon: "heart" },
     { page: "tips", file: "tips.html", label: "Tips", icon: "leaf" },
     { page: "profile", file: "profile.html", label: "Profile", icon: "user" }
   ];
@@ -147,7 +148,8 @@ window.HM = window.HM || {};
     chat: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5V14a2.5 2.5 0 0 1-2.5 2.5H9l-5 4z"/>',
     grid: '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
     leaf: '<path d="M5 19c7-1 12-6 13-14-8 1-13 6-14 14z"/><path d="M6 18c2-4 5-7 9-9"/>',
-    user: '<circle cx="12" cy="8.5" r="3.7"/><path d="M5 20c1.4-3.6 4-5.3 7-5.3s5.6 1.7 7 5.3"/>'
+    user: '<circle cx="12" cy="8.5" r="3.7"/><path d="M5 20c1.4-3.6 4-5.3 7-5.3s5.6 1.7 7 5.3"/>',
+    heart: '<path d="M12 20c-5-3.4-8.5-7-8.5-10.6A4.4 4.4 0 0 1 12 6.6a4.4 4.4 0 0 1 8.5 2.8C20.5 13 17 16.6 12 20z"/>'
   };
 
   function icon(name) {
@@ -159,14 +161,22 @@ window.HM = window.HM || {};
 
   function headerHtml(shell, page) {
     var links = shell === "app" ? APP_LINKS : SITE_LINKS;
+    var user = HM.auth && HM.auth.current();
     var navHtml = links.map(function (l) {
       var current = l.page === page ? ' aria-current="page"' : "";
       return '<a href="' + linkHref(l) + '"' + current + ">" + HM.dom.escapeHtml(l.label) + "</a>";
     }).join("");
 
+    if (user) {
+      navHtml += '<a href="#" class="nav-logout" data-logout title="Signed in as ' +
+        HM.dom.escapeHtml(user.email) + '">Log out</a>';
+    }
+
     var cta = shell === "app"
       ? '<a class="btn btn-primary btn-sm" href="' + pageHref("checkin.html") + '">Daily check-in</a>'
-      : '<a class="btn btn-primary btn-sm" href="' + pageHref("app.html") + '">Open the app</a>';
+      : user || !HM.auth
+        ? '<a class="btn btn-primary btn-sm" href="' + pageHref("app.html") + '">Open the app</a>'
+        : '<a class="btn btn-primary btn-sm" href="' + pageHref("login.html") + '">Log in</a>';
 
     return '' +
       '<div class="nav">' +
@@ -314,6 +324,17 @@ window.HM = window.HM || {};
     });
 
     wireNavToggle();
+    wireLogout();
+  }
+
+  function wireLogout() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-logout]"), function (link) {
+      link.addEventListener("click", function (event) {
+        event.preventDefault();
+        HM.auth.logOut();
+        HM.navigate(pageHref("login.html") + "?out=1");
+      });
+    });
   }
 
   HM.chrome = { render: render, icon: icon };

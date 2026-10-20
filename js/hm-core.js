@@ -1,14 +1,18 @@
 /* ==========================================================================
    Happy Moms — core runtime
    Storage, date/gestation math, small stats helpers, DOM utilities.
-   All data lives in this browser only. There is no server and no account.
+   All data lives in this browser only. There is no server; local accounts
+   (hm-auth.js) only decide which storage key belongs to whom.
    ========================================================================== */
 window.HM = window.HM || {};
 
 (function (HM) {
   "use strict";
 
-  var STORAGE_KEY = "happymoms.v1";
+  /* Signed in, each account has its own key. Signed out (or with no auth
+     script on the page) the bare key is used, as it was before accounts. */
+  var signedIn = HM.auth && HM.auth.current();
+  var STORAGE_KEY = signedIn ? HM.auth.dataKey(signedIn.id) : "happymoms.v1";
   var memoryFallback = null; // used when localStorage is unavailable
 
   /* ---------------------------------------------------------------- state */
@@ -33,6 +37,8 @@ window.HM = window.HM || {};
       puzzle: {},             // { "YYYY-MM-DD": { word, guesses, status } }
       favorites: [],          // saved tip ids
       assistant: [],          // [{ query, entryId, at }]
+      screenings: [],         // completed EPDS mood checks, see js/hm-screening.js
+      riskProfile: null,      // About you answers, see js/hm-risk.js
       settings: { theme: "light", sampleData: false }
     };
   }
@@ -61,6 +67,8 @@ window.HM = window.HM || {};
     out.puzzle = (saved && saved.puzzle) || {};
     out.favorites = (saved && saved.favorites) || [];
     out.assistant = (saved && saved.assistant) || [];
+    out.screenings = (saved && saved.screenings) || [];
+    out.riskProfile = (saved && saved.riskProfile) || null;
     out.schema = 1;
     return out;
   }

@@ -57,8 +57,16 @@ module.exports = {
       };
     }
 
-    function loadPage(file, saved) {
+    /* Pages load signed in as this account unless a test says otherwise,
+       because every private app page sends a signed-out visitor to login. */
+    const TEST_USER = { id: "utest", email: "test@example.org", name: "Test", salt: "00", hash: "00", iterations: 1 };
+    const DATA_KEY = "happymoms.v1." + TEST_USER.id;
+    const stored = (window) => JSON.parse(window.localStorage.getItem(DATA_KEY));
+
+    function loadPage(file, saved, opts) {
+      const { signedIn = true } = opts || {};
       return new Promise((resolve) => {
+        const navigated = [];
         const errors = [];
         const vc = new VirtualConsole();
         vc.on("jsdomError", (e) => errors.push(e.message));
@@ -74,7 +82,18 @@ module.exports = {
             window.scrollTo = () => {};
             window.print = () => {};
             window.HTMLElement.prototype.scrollIntoView = () => {};
-            if (saved) window.localStorage.setItem("happymoms.v1", JSON.stringify(saved));
+            /* jsdom has no SubtleCrypto or TextEncoder; lend it Node's so hashing runs. */
+            if (!(window.crypto && window.crypto.subtle)) {
+              Object.defineProperty(window, "crypto", { value: require("crypto").webcrypto, configurable: true });
+            }
+            if (!window.TextEncoder) window.TextEncoder = require("util").TextEncoder;
+            /* Navigation is not implemented in jsdom, so record it instead. */
+            window.HM = { navigate: (url) => navigated.push(url) };
+            if (signedIn) {
+              window.localStorage.setItem("happymoms.accounts", JSON.stringify({ version: 1, users: [TEST_USER] }));
+              window.sessionStorage.setItem("happymoms.session", JSON.stringify({ id: TEST_USER.id }));
+            }
+            if (saved) window.localStorage.setItem(signedIn ? DATA_KEY : "happymoms.v1", JSON.stringify(saved));
           }
         });
 
@@ -93,7 +112,7 @@ module.exports = {
           errors.push("THREW: " + err.message);
         }
 
-        setTimeout(() => resolve({ window, errors }), 60);
+        setTimeout(() => resolve({ window, errors, navigated }), 60);
       });
     }
 
@@ -245,8 +264,8 @@ module.exports = {
 
       t.check("check-in reaches its saved screen", doc.getElementById("ciDone").classList.contains("active"));
 
-      const stored = JSON.parse(window.localStorage.getItem("happymoms.v1"));
-      const entry = stored.checkins[Object.keys(stored.checkins)[0]];
+      const saved = stored(window);
+      const entry = saved.checkins[Object.keys(saved.checkins)[0]];
       t.check("check-in wrote an entry", !!entry);
       t.check("check-in stored the mood that was tapped", entry && entry.mood === 4, entry && String(entry.mood));
       t.check("check-in stored the symptom that was tapped",
@@ -267,7 +286,7 @@ module.exports = {
       t.check("solving reveals the result panel", !window.document.getElementById("pzResult").hidden);
       t.check("the result teaches the word's note",
         window.document.getElementById("pzResult").innerHTML.includes(answer));
-      const saved = JSON.parse(window.localStorage.getItem("happymoms.v1")).puzzle;
+      const saved = stored(window).puzzle;
       t.check("the day's result is saved", Object.values(saved)[0].status === "won");
       window.close();
     }
@@ -310,7 +329,7 @@ module.exports = {
       window.document.getElementById("pf-name").value = "Ada";
       window.document.getElementById("saveProfile").click();
       t.check("profile edits are saved",
-        JSON.parse(window.localStorage.getItem("happymoms.v1")).profile.name === "Ada");
+        stored(window).profile.name === "Ada");
       t.check("the delete control is present",
         window.document.getElementById("dangerZone").innerHTML.includes("Delete all my data"));
       window.close();
@@ -322,7 +341,172 @@ module.exports = {
       const stamped = window.document.documentElement.getAttribute("data-theme");
       t.check("the theme toggle stamps the document", stamped === "dark" || stamped === "light", String(stamped));
       t.check("the theme choice is remembered",
-        JSON.parse(window.localStorage.getItem("happymoms.v1")).settings.theme === stamped);
+        stored(window).settings.theme === stamped);
+      window.close();
+    }
+
+    // ---------- mood check (UC.7, N-10), tapped through
+    {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      async function tapThrough(window, answers) {
+        window.document.getElementById("mcStart").click();
+        for (const a of answers) {
+          window.document.querySelectorAll("#mcStep .choice-btn")[a].click();
+          await wait(220);
+        }
+      }
+
+      const calm = await loadPage(P("mood-check.html"), seed());
+      let doc = calm.window.document;
+      t.check("N-10 the mood check opens on its introduction", !doc.getElementById("mcIntro").hidden);
+      await tapThrough(calm.window, [1, 1, 1, 1, 1, 1, 1, 1, 3, 3]);
+      t.check("N-10 a completed check shows its result", !doc.getElementById("mcResult").hidden &&
+        doc.getElementById("mcUrgent").hidden);
+      t.check("N-10 a high score shows the provider recommendation",
+        /provider soon/i.test(doc.getElementById("mcResultTitle").textContent + doc.getElementById("mcResultBody").textContent));
+      t.check("N-10 the result shows the score", doc.getElementById("mcScore").textContent.includes("13 of 30"));
+      const savedCalm = stored(calm.window).screenings;
+      t.check("N-10 the check is saved to the account", savedCalm.length === 1 && savedCalm[0].band === "call" &&
+        savedCalm[0].shareOnNotes === false);
+      calm.window.close();
+
+      const urgent = await loadPage(P("mood-check.html"), seed());
+      doc = urgent.window.document;
+      await tapThrough(urgent.window, [0, 0, 3, 0, 3, 3, 3, 3, 3, 1]);
+      t.check("N-10 self-harm answer routes to urgent help before any score",
+        !doc.getElementById("mcUrgent").hidden && doc.getElementById("mcResult").hidden &&
+        !doc.getElementById("mcUrgent").textContent.includes("of 30"));
+      t.check("N-10 urgent help lists 988", !!doc.querySelector('#mcContacts a[href="tel:988"]'));
+      t.check("N-10 an urgent check is saved before anything is shown", stored(urgent.window).screenings[0].band === "urgent");
+      doc.getElementById("mcContinue").click();
+      t.check("N-10 she can continue to her results afterwards", !doc.getElementById("mcResult").hidden);
+      urgent.window.close();
+
+      const today = await loadPage(P("app.html"), seed());
+      t.check("N-10 Today links to the mood check",
+        !!today.window.document.querySelector('#appQuick a[href="mood-check.html"]'));
+      today.window.close();
+    }
+
+    // ---------- About you and prediction inputs on the same tab (N-10)
+    {
+      const { window } = await loadPage(P("mood-check.html"), seed());
+      const doc = window.document;
+      const rows = () => [...doc.querySelectorAll("#inputsBody tr")];
+      const valueOf = (name) => {
+        const row = rows().find((r) => r.querySelector(".inputs-var").textContent === name);
+        return row ? row.children[1].textContent : "(no row)";
+      };
+      const tap = (question, label) => {
+        const q = [...doc.querySelectorAll("#riskForm .risk-q")]
+          .find((n) => n.querySelector(".risk-label").id === "rq-" + question);
+        [...q.querySelectorAll("button")].find((b) => b.textContent === label).click();
+      };
+
+      t.check("N-10 the tab shows the About you questions", doc.querySelectorAll("#riskForm .risk-q").length === 5);
+      t.check("N-10 the tab lists all twelve prediction inputs", rows().length === 12);
+      t.equal("N-10 an unanswered input reads 'Not yet'", valueOf("prior_ppd"), "Not yet");
+      const moodAvg = Number(valueOf("mood_mean_14d"));
+      t.check("N-10 daily check-ins already fill the mood average", moodAvg >= 3 && moodAvg <= 5, valueOf("mood_mean_14d"));
+
+      tap("priorPpd", "Yes");
+      tap("supportLevel", "One person");
+      tap("lifeEvents", "Moved home");
+      tap("lifeEvents", "Serious money worries, such as trouble paying bills");
+      tap("pregnancyComplications", "None of these");
+
+      const rp = stored(window).riskProfile;
+      t.check("N-10 About you answers save as they are tapped",
+        rp && rp.priorPpd === "yes" && rp.supportLevel === 1 && rp.lifeEvents.length === 2 &&
+        Array.isArray(rp.pregnancyComplications) && rp.pregnancyComplications.length === 0);
+      t.check("N-10 the inputs update after an answer",
+        valueOf("prior_ppd") === "Yes" && valueOf("support_level") === "1" &&
+        valueOf("life_events_count") === "2" && valueOf("preeclampsia") === "No");
+
+      tap("lifeEvents", "Moved home");
+      t.equal("N-10 tapping an answer again removes it", valueOf("life_events_count"), "1");
+      window.close();
+    }
+
+    // ---------- login
+    {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+      const gated = await loadPage(P("app.html"), null, { signedIn: false });
+      t.check("a signed-out visit to a private page goes to login",
+        gated.navigated[0] === "login.html?next=app.html", String(gated.navigated));
+      t.check("the private page stays hidden while it redirects",
+        gated.window.document.documentElement.classList.contains("hm-signed-out"));
+      gated.window.close();
+
+      for (const page of ["crisis.html", "tips.html"]) {
+        const { window, navigated } = await loadPage(P(page), null, { signedIn: false });
+        t.check(page + " opens without logging in", navigated.length === 0, String(navigated));
+        window.close();
+      }
+
+      const home = await loadPage("index.html", null, { signedIn: false });
+      t.check("the home page offers a login when signed out",
+        home.window.document.getElementById("siteHeader").innerHTML.includes("login.html"));
+      home.window.close();
+
+      /* Create an account; data saved before accounts existed comes with it. */
+      const { window, navigated, errors } = await loadPage(P("login.html"), seed(), { signedIn: false });
+      const doc = window.document;
+      t.check("with no accounts the login page opens on sign-up", !doc.getElementById("signupForm").hidden);
+      doc.getElementById("signupName").value = "Ada";
+      doc.getElementById("signupEmail").value = "Ada@Example.org";
+      doc.getElementById("signupPassword").value = "short";
+      doc.getElementById("signupConfirm").value = "short";
+      doc.getElementById("signupForm").dispatchEvent(new window.Event("submit", { cancelable: true }));
+      await wait(30);
+      t.check("a short password is refused", !doc.getElementById("authError").hidden && navigated.length === 0);
+
+      doc.getElementById("signupPassword").value = "correct horse";
+      doc.getElementById("signupConfirm").value = "correct horse";
+      doc.getElementById("signupForm").dispatchEvent(new window.Event("submit", { cancelable: true }));
+      await wait(1500);
+      t.check("signing up goes to the app", navigated[0] === "app.html", String(navigated) + errors.join(" | "));
+
+      const accounts = JSON.parse(window.localStorage.getItem("happymoms.accounts"));
+      const user = accounts.users[0];
+      t.check("the account is saved with a normalized email", user && user.email === "ada@example.org");
+      t.check("the password itself is never stored",
+        !window.localStorage.getItem("happymoms.accounts").includes("correct horse") && /^[0-9a-f]{64}$/.test(user.hash));
+      const adopted = JSON.parse(window.localStorage.getItem("happymoms.v1." + user.id));
+      t.check("the first account adopts the data saved before accounts",
+        adopted && Object.keys(adopted.checkins).length === 12 && !window.localStorage.getItem("happymoms.v1"));
+      t.check("signing up starts a session", window.HM.auth.current() && window.HM.auth.current().id === user.id);
+      t.check("one sign-up makes exactly one account", accounts.users.length === 1, String(accounts.users.length));
+
+      /* Log out, then log back in, once wrongly and once properly. */
+      window.HM.auth.logOut();
+      t.check("logging out ends the session", window.HM.auth.current() === null);
+      const wrong = await window.HM.auth.logIn({ email: "ada@example.org", password: "wrong password" })
+        .then(() => false, (e) => /do not match/.test(e.message));
+      t.check("a wrong password is refused", wrong && window.HM.auth.current() === null);
+      const right = await window.HM.auth.logIn({ email: " ADA@example.org ", password: "correct horse" })
+        .then(() => true, () => false);
+      t.check("the right password logs in", right && window.HM.auth.current().id === user.id);
+      const dupe = await window.HM.auth.signUp({ email: "ada@example.org", password: "another one" })
+        .then(() => false, (e) => /already exists/.test(e.message));
+      t.check("an email can only be registered once", dupe);
+      t.check("only a page name is accepted as a return target",
+        window.HM.auth.safeNext("https://evil.example/x.html") === "app.html" &&
+        window.HM.auth.safeNext("summary.html") === "summary.html");
+
+      t.check("deleting the account removes it and its data",
+        window.HM.auth.deleteAccount() && !window.HM.auth.hasAccounts() &&
+        !window.localStorage.getItem("happymoms.v1." + user.id));
+      window.close();
+    }
+
+    {
+      const { window } = await loadPage(P("profile.html"), seed());
+      t.check("the profile shows who is signed in",
+        window.document.getElementById("accountBlock").textContent.includes("test@example.org"));
+      t.check("signed-in pages offer a log out",
+        !!window.document.querySelector("#siteHeader [data-logout]"));
       window.close();
     }
   }

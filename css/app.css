@@ -1156,6 +1156,112 @@
 .danger-zone h3 { color: var(--alert-ink); font-size: 1.05rem; }
 .danger-zone p { color: var(--alert-ink); font-size: 0.9rem; }
 
+/* ---------- Login ---------- */
+/* hm-auth.js marks a signed-out visit before the body paints. Private app
+   pages stay hidden while it redirects to the login page; urgent help and
+   tips are public and never hidden. */
+.hm-signed-out body[data-shell="app"]:not([data-page="crisis"]):not([data-page="tips"]) {
+  visibility: hidden;
+}
+
+/* The app header has no room for a tenth link at full width, so Log out
+   lives in the folded menu and on the Profile page there. Matches the
+   1559px fold point in style.css. */
+@media (min-width: 1560px) {
+  body[data-shell="app"] .nav-logout { display: none; }
+}
+
+.auth-main { max-width: 520px; }
+.auth-card h1 { font-size: 1.9rem; margin-bottom: 6px; }
+.auth-tabs { margin: 18px 0 22px; }
+.auth-error { margin: 0 0 20px; }
+
+.auth-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  margin: -4px 0 22px;
+  cursor: pointer;
+}
+
+.auth-check input { width: 17px; height: 17px; accent-color: var(--color-rose-deep); }
+.auth-submit { width: 100%; justify-content: center; }
+.auth-submit:disabled { opacity: 0.7; cursor: progress; }
+.auth-note { margin: 22px 0 0; line-height: 1.55; }
+.auth-urgent { margin-top: 22px; }
+.auth-urgent a { text-decoration: underline; }
+
+/* ---------- Mood check (EPDS) ---------- */
+.mc-points { margin: 0 0 24px; padding-left: 1.2em; display: grid; gap: 8px; font-size: 0.95rem; list-style: disc; }
+.mc-points a { text-decoration: underline; }
+
+.mc-history { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--color-border); }
+.mc-history ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+.mc-history li { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 0.92rem; flex-wrap: wrap; }
+
+.mc-band-below { background: var(--ok-bg); color: var(--ok-ink); border-color: transparent; }
+.mc-band-positive, .mc-band-call { background: var(--warn-bg); color: var(--warn-ink); border-color: transparent; }
+.mc-band-urgent { background: var(--alert-bg); color: var(--alert-ink); border-color: transparent; }
+
+.mc-urgent {
+  border: 1px solid var(--alert-ink);
+  border-radius: var(--radius-md);
+  background: var(--alert-bg);
+  padding: 24px 26px;
+}
+.mc-urgent h2 { color: var(--alert-ink); font-size: 1.5rem; margin-bottom: 8px; }
+.mc-urgent > p { color: var(--alert-ink); }
+
+.mc-contacts { list-style: none; margin: 18px 0; padding: 0; display: grid; gap: 10px; }
+.mc-contacts li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+}
+.mc-contacts li p { margin: 2px 0 0; color: var(--color-charcoal-soft); max-width: 46ch; }
+
+.mc-score {
+  display: grid;
+  gap: 4px;
+  margin: 20px 0 24px;
+  padding: 16px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-cream);
+}
+.mc-score-num { font-family: var(--font-display); font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+
+/* About you and prediction inputs, on the same tab */
+.mc-panel { margin-top: 22px; }
+.risk-form { display: grid; gap: 22px; margin-bottom: 8px; }
+.risk-q { padding-bottom: 20px; border-bottom: 1px solid var(--color-border); }
+.risk-q:last-child { border-bottom: 0; padding-bottom: 0; }
+.risk-label { font-weight: 600; font-size: 0.95rem; margin: 0 0 10px; max-width: 62ch; }
+.risk-options { margin-bottom: 0; }
+
+.inputs-wrap { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.inputs-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 560px; }
+.inputs-table th,
+.inputs-table td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--color-border); }
+.inputs-table tbody tr:last-child td { border-bottom: 0; }
+.inputs-table th {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  color: var(--color-charcoal-soft);
+  background: var(--color-cream);
+}
+.inputs-label { display: block; }
+.inputs-var { display: block; font-size: 0.74rem; color: var(--color-charcoal-soft); margin-top: 2px; }
+.inputs-num { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+
 /* ---------- Crisis page ---------- */
 .crisis-hero {
   background: var(--alert-bg);

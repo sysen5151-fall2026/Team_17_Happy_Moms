@@ -21,7 +21,7 @@ guardrailed assistant answers everyday questions from vetted content, a daily wo
 puzzle keeps the habit going, and anything urgent is routed to a provider or a crisis
 line rather than answered.
 
-Static site, no build step, no server, no accounts. It runs on GitHub Pages free tier
+Static site, no build step, no server. Accounts are local to the browser. It runs on GitHub Pages free tier
 and stores everything in the visitor's own browser.
 
 ---
@@ -51,6 +51,24 @@ For a closer match to how it behaves when deployed, serve the folder over HTTP:
 ```
 python -m http.server 8000      # then open http://localhost:8000
 ```
+
+Signing up and logging in use the browser's Web Crypto API, which only works on a
+secure origin, so use `http://localhost:8000` (or the deployed https site) rather than
+opening the file directly if the login page reports an insecure context.
+
+### Log-in
+
+`html/login.html` lets each person create an account and log in. Private app pages
+redirect there when nobody is signed in; `crisis.html` and `tips.html` stay open to
+everyone. Accounts are local to the browser, like everything else:
+
+- Accounts are stored under `happymoms.accounts` with a salted PBKDF2-SHA256 hash, never
+  the password. Each account's data lives under `happymoms.v1.<user id>`.
+- The session sits in `sessionStorage` (ends with the tab) or, with "Keep me signed in",
+  in `localStorage`.
+- The first account created in a browser adopts any data saved before accounts existed.
+- There is no password reset, because there is no server. The login keeps other people
+  on a shared device out of the app; it does not encrypt the data on disk.
 
 To run the tests you need Node and one dev dependency:
 
@@ -267,7 +285,7 @@ These are the constraints the mission analysis set, and the code enforces them:
    interface links it.
 5. **Trends describe, they do not interpret.** `hm-insights.js` reports what was
    logged. It never labels a pattern as a condition.
-6. **The user controls her data.** No transmission, no account, no health-record
+6. **The user controls her data.** No transmission, no server-side account, no health-record
    integration. Export and delete are one click each.
 7. **`crisis.html` is plain HTML.** It must keep working if scripts fail, so do not
    make its phone numbers depend on JavaScript.

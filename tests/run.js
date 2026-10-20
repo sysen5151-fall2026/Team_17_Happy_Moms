@@ -15,6 +15,8 @@ const SUITES = [
   { name: "core", file: "./core.test.js", about: "dates, gestation, streaks, storage" },
   { name: "content", file: "./content.test.js", about: "tips, answers, urgent signs, puzzle words" },
   { name: "assistant", file: "./assistant.test.js", about: "red-flag screening and retrieval" },
+  { name: "screening", file: "./screening.test.js", about: "EPDS mood check: scoring, self-harm routing, wording (N-10)" },
+  { name: "risk", file: "./risk.test.js", about: "prediction inputs from answers, mood checks, check-ins (N-10)" },
   { name: "insights", file: "./insights.test.js", about: "trends, coverage, charts, scoring" },
   { name: "pages", file: "./pages.test.js", about: "every page, rendered and clicked" }
 ];

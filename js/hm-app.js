@@ -156,7 +156,11 @@ window.HM = window.HM || {};
 
     var openQuestions = (state.questions || []).filter(function (q) { return !q.asked; }).length;
 
+    var lastCheck = (state.screenings || []).slice(-1)[0];
+    var moodSub = lastCheck ? "Last taken " + HM.dates.formatDate(lastCheck.takenOn) : "Ten questions, two minutes";
+
     host.innerHTML = "";
+    host.appendChild(quickLink("mood-check.html", "heart", "Mood check", moodSub));
     host.appendChild(quickLink("puzzle.html", "grid", "Daily puzzle", puzzleSub));
     host.appendChild(quickLink("assistant.html", "chat", "Wellness assistant", "Ask a vetted question"));
     host.appendChild(quickLink("summary.html", "notes", "Visit notes",
