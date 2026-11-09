@@ -13,6 +13,7 @@ const MODULE_ORDER = [
   "hm-core",
   "hm-content",
   "hm-screening",
+  "hm-records",
   "hm-risk",
   "hm-charts",
   "hm-insights",

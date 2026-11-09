@@ -284,17 +284,15 @@ window.HM = window.HM || {};
     }
   }
 
+  /* Hands the answers to F.3.3 Maintain Wellness History (HM.records,
+     mechanism C.3.3) and shows what came back. This page collects the data
+     (F.3.2); it does not decide the entry shape, write storage or judge what
+     counts as high risk. */
   function save() {
-    var entry = Object.assign({}, state.answers);
-    entry.date = state.dateKey;
-    entry.createdAt = new Date().toISOString();
-    delete entry.sample;
+    var data = Object.assign({}, state.answers, { date: state.dateKey });
+    var out = HM.records.maintainWellnessHistory({ dailyWellnessCheckinData: data });
 
-    HM.store.update(function (s) {
-      s.checkins[state.dateKey] = entry;
-    });
-
-    showDone(entry);
+    showDone(out.recordedWellnessEntry, out.highRiskAlert);
   }
 
   /* ----------------------------------------------------------- completion */
@@ -317,7 +315,7 @@ window.HM = window.HM || {};
     return String(value);
   }
 
-  function showDone(entry) {
+  function showDone(entry, highRiskAlert) {
     nodes.form.hidden = true;
     nodes.done.classList.add("active");
 
@@ -340,7 +338,8 @@ window.HM = window.HM || {};
     nodes.doneBody.appendChild(recap);
     nodes.doneBody.appendChild(el("p", { class: "small muted", style: "margin-top:16px", text: "Also logged: " + symptomText }));
 
-    if ((entry.urgent || []).length) {
+    /* The alert is F.3.3.3's output, not this page's judgment. */
+    if (highRiskAlert) {
       nodes.doneBody.appendChild(el("div", {
         class: "banner banner-alert",
         style: "margin-top:18px;text-align:left",
