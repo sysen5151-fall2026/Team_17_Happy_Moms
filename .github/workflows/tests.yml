@@ -1,0 +1,57 @@
+name: tests
+
+# Both suites, on every push and pull request.
+#
+#   npm test  — the product suites (js/, html/), 430 checks
+#   pytest    — tests/test_functional_requirements.py, one test per requirement
+#               ID satisfied by F.3.3 Maintain Wellness History
+#
+# The Python suite drives the real browser module through
+# tests/hm-records-bridge.js, so this job needs both runtimes.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: node ${{ matrix.node }} · python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - node: '20'
+            python: '3.11'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install jsdom
+        # The page suite needs jsdom; the logic suites need nothing. No
+        # package-lock.json is committed, so this is `npm install`.
+        run: npm install
+
+      - name: Product suites (npm test)
+        run: npm test
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install test requirements
+        run: python -m pip install --upgrade pip -r tests/requirements.txt
+
+      - name: Functional requirement tests (F.3.3)
+        run: python -m pytest tests/test_functional_requirements.py -v

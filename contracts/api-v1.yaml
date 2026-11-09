@@ -1,0 +1,531 @@
+openapi: 3.1.0
+# 3.1.0, not 3.0.x: the nullable outputs below (`highRiskAlert`, `firstDate`)
+# are written as JSON Schema `type: 'null'`, which 3.0.x does not allow.
+
+# ============================================================================
+# Happy Moms — interface contract for F.3.3 Maintain Wellness History
+#
+# Lab manual Ch 7. One operation per flow that crosses a module boundary
+# inside the F.3.3 IDEF0 diagram, plus the boundary arrows of the box itself.
+#
+# The two INTERNAL flows on the diagram, which are what this contract is for:
+#
+#   F.3.3.1 Ingest Check-In Data ──Recorded Wellness Entry──► F.3.3.2 Persist Session Record
+#   F.3.3.1 Ingest Check-In Data ──Screening Entry Payload──► F.3.3.3 Screen for High Risk Alerts
+#
+# Realization today: Happy Moms is a static site with no server, so these
+# operations are realized in-process as direct calls between the modules of
+# C.3.3 (js/hm-records.js). The contract is still the authority on the shape
+# and the direction of each flow, and it is what a later split into services
+# would be built against. The mapping:
+#
+#   operationId                      | realized today by
+#   ---------------------------------+------------------------------------------
+#   ingestCheckInData                | HM.records.ingestCheckInData()
+#   persistRecordedWellnessEntry     | HM.records.persistSessionRecord()
+#   screenEntryPayload               | HM.records.screenForHighRiskAlerts()
+#   getUpdatedWellnessHistory        | the updatedWellnessHistory output of persistSessionRecord()
+#   getWellnessSessionRecord         | the wellnessSessionRecord output of persistSessionRecord()
+#
+# Requirement IDs are qualified by subsystem (WRS = Wellness Records
+# Subsystem, C.3.3), because Innoslate numbers requirements per subsystem and
+# the bare numbers collide. See docs/traceability.md.
+# ============================================================================
+
+info:
+  title: Happy Moms — Wellness Records Subsystem (C.3.3)
+  version: 1.0.0
+  description: |
+    The interface of F.3.3 Maintain Wellness History and of the flows between
+    its three children. No personal data leaves the mother's device under this
+    contract: every operation is local to the subsystem that holds her record.
+
+    Model trace
+      Function    F.3.3 Maintain Wellness History
+      Mechanism   C.3.3 Wellness Records Subsystem
+      Children    F.3.3.1 (C.3.3.1), F.3.3.2 (C.3.3.2), F.3.3.3 (C.3.3.3)
+      Use cases   UC.2, UC.1.11, UC.1.30
+  contact:
+    name: Team 17, SYSEN 5151
+
+servers:
+  - url: /api/v1
+    description: Same-origin, in-process. There is no remote server at this stage.
+
+tags:
+  - name: internal-flow
+    description: |
+      Flows between the children of F.3.3. These do not cross the F.3.3
+      boundary on the diagram.
+  - name: boundary-flow
+    description: |
+      The arrows that cross the F.3.3 boundary, given for context so the
+      internal flows can be read in order.
+
+paths:
+  # ------------------------------------------------------------------ internal
+
+  /wellness-records/recorded-entries:
+    post:
+      operationId: persistRecordedWellnessEntry
+      tags: [internal-flow]
+      summary: Carry a Recorded Wellness Entry from F.3.3.1 to F.3.3.2
+      description: |
+        Internal flow **Recorded Wellness Entry**, F.3.3.1 Ingest Check-In Data
+        → F.3.3.2 Persist Session Record.
+
+        Also the entry point for requirement WRS-1.1.2, when the Daily
+        Check-In Subsystem (C.3.2) supplies an already-recorded entry.
+
+        One record per calendar day: posting a day that already exists
+        replaces it, which is how editing a missed day works.
+      x-idef0:
+        flow: Recorded Wellness Entry
+        from: F.3.3.1
+        to: F.3.3.2
+        kind: input
+      x-requirements: [WRS-1.1.2, WRS-1.4.2, WRS-1.2.2]
+      x-tests: [test_wrs_1_1_2_accept_recorded_wellness_entry, test_wrs_1_4_2_persist_session_record]
+      parameters:
+        - name: summaryPrompt
+          in: query
+          required: false
+          description: |
+            The **Summary Prompt** control of F.3.3.2, as `start..end` date
+            keys. It governs the interval of the Wellness Session Record in
+            the response. It is not stored. Omitted, the record covers the day
+            just written.
+          schema:
+            type: string
+            pattern: '^\d{4}-\d{2}-\d{2}\.\.\d{4}-\d{2}-\d{2}$'
+          example: 2026-10-25..2026-11-02
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [recordedWellnessEntry]
+              properties:
+                recordedWellnessEntry:
+                  $ref: '#/components/schemas/RecordedWellnessEntry'
+                wellnessSessionRecord:
+                  allOf:
+                    - $ref: '#/components/schemas/WellnessSessionRecord'
+                  description: |
+                    Optional. A record handed back by the Wellness Information
+                    Subsystem (C.3.5), requirement WRS-1.1.5. Questions it
+                    carries are merged into the mother's list; duplicates by
+                    `id` are dropped.
+      responses:
+        '200':
+          description: Stored. Returns the outputs of F.3.3.2.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [wellnessSessionRecord, updatedWellnessHistory, stored]
+                properties:
+                  wellnessSessionRecord:
+                    $ref: '#/components/schemas/WellnessSessionRecord'
+                  updatedWellnessHistory:
+                    $ref: '#/components/schemas/UpdatedWellnessHistory'
+                  stored:
+                    type: boolean
+                    description: |
+                      False when browser storage is unavailable and the record
+                      is held in memory for this session only.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /wellness-records/screening-entries:
+    post:
+      operationId: screenEntryPayload
+      tags: [internal-flow]
+      summary: Carry a Screening Entry Payload from F.3.3.1 to F.3.3.3
+      description: |
+        Internal flow **Screening Entry Payload**, F.3.3.1 Ingest Check-In Data
+        → F.3.3.3 Screen for High Risk Alerts.
+
+        The payload is the screened subset of the entry, not the entry: no
+        note, no sleep, no hydration. The mother's free text is never screened.
+
+        The criteria are the published maternal warning signs (ACOG, CDC Hear
+        Her) held once in `HM.content.urgentSigns`, plus EPDS item 10 above
+        "Never" from the mood check (`selfHarmReported`). A code that is not on
+        that list raises nothing.
+
+        This screens; it does not diagnose. The response names the signs she
+        reported and the route to help, never a condition.
+      x-idef0:
+        flow: Screening Entry Payload
+        from: F.3.3.1
+        to: F.3.3.3
+        kind: input
+      x-requirements: [WRS-1.4.3, WRS-1.2.1, StR2.1]
+      x-tests: [test_wrs_1_4_3_screen_for_high_risk_alerts, test_str2_1_high_risk_crisis_display]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScreeningEntryPayload'
+      responses:
+        '200':
+          description: |
+            Screened. `highRiskAlert` is null when nothing met the criteria.
+            Synchronous, local and with no network call, so the route to help
+            is available in the same turn as the entry (StR2.1).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [highRiskAlert]
+                properties:
+                  highRiskAlert:
+                    oneOf:
+                      - $ref: '#/components/schemas/HighRiskAlert'
+                      - type: 'null'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  # ------------------------------------------------------------------ boundary
+
+  /wellness-records/check-ins:
+    post:
+      operationId: ingestCheckInData
+      tags: [boundary-flow]
+      summary: F.3.3 input — Daily Wellness Checkin Data, and User Defined Custom Info
+      description: |
+        The whole of F.3.3 in one call, as html/checkin.html uses it: ingest,
+        persist, screen. Equivalent to `persistRecordedWellnessEntry` followed
+        by `screenEntryPayload` on the outputs of F.3.3.1.
+      x-idef0:
+        flows: [Daily Wellness Checkin Data, User Defined Custom Info]
+        from: C.1 Expecting Mother, C.6 External AI Service
+        to: F.3.3.1
+        kind: input
+      x-requirements: [WRS-1.1.1, WRS-1.1.4, WRS-1.4.1]
+      x-tests: [test_wrs_1_1_1_accept_daily_wellness_checkin_data, test_wrs_1_1_4_accept_user_defined_custom_info]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dailyWellnessCheckinData]
+              properties:
+                dailyWellnessCheckinData:
+                  $ref: '#/components/schemas/DailyWellnessCheckinData'
+                userDefinedCustomInfo:
+                  $ref: '#/components/schemas/UserDefinedCustomInfo'
+                summaryPrompt:
+                  $ref: '#/components/schemas/SummaryPrompt'
+      responses:
+        '201':
+          description: Recorded. All four outputs of F.3.3.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - recordedWellnessEntry
+                  - wellnessSessionRecord
+                  - updatedWellnessHistory
+                  - highRiskAlert
+                properties:
+                  recordedWellnessEntry:
+                    $ref: '#/components/schemas/RecordedWellnessEntry'
+                  wellnessSessionRecord:
+                    $ref: '#/components/schemas/WellnessSessionRecord'
+                  updatedWellnessHistory:
+                    $ref: '#/components/schemas/UpdatedWellnessHistory'
+                  highRiskAlert:
+                    oneOf:
+                      - $ref: '#/components/schemas/HighRiskAlert'
+                      - type: 'null'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /wellness-records/history:
+    get:
+      operationId: getUpdatedWellnessHistory
+      tags: [boundary-flow]
+      summary: F.3.3 output — Updated Wellness History, to the Trend Analysis Subsystem
+      description: |
+        Requirement WRS-1.2.2. The index of the record, oldest first: what
+        C.3.4 needs to choose a window. The entries themselves come with the
+        Wellness Session Record.
+      x-idef0:
+        flow: Updated Wellness History
+        from: F.3.3.2
+        to: C.3.4 Trend Analysis Subsystem
+        kind: output
+      x-requirements: [WRS-1.2.2]
+      x-tests: [test_wrs_1_2_2_provide_updated_wellness_history]
+      responses:
+        '200':
+          description: The current history index.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatedWellnessHistory'
+
+  /wellness-records/session-record:
+    get:
+      operationId: getWellnessSessionRecord
+      tags: [boundary-flow]
+      summary: F.3.3 output — Wellness Session Record, to the Wellness Information Subsystem
+      description: |
+        Requirement WIS-1.1.5 / WRS-1.1.3. The entries over the interval the
+        Summary Prompt names, which is what C.3.5 turns into an appointment
+        summary.
+      x-idef0:
+        flow: Wellness Session Record
+        from: F.3.3.2
+        to: C.3.5 Wellness Information Subsystem
+        kind: output
+      x-requirements: [WRS-1.1.3]
+      x-tests: [test_wrs_1_1_3_accept_summary_prompt]
+      parameters:
+        - name: start
+          in: query
+          required: false
+          schema: { type: string, format: date }
+        - name: end
+          in: query
+          required: false
+          schema: { type: string, format: date }
+        - name: sinceVisit
+          in: query
+          required: false
+          description: The last-visit date from her profile, as StR4.1 defines the range.
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: The record over the requested interval.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WellnessSessionRecord'
+
+components:
+  responses:
+    BadRequest:
+      description: The flow did not match its schema. Nothing was stored.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+  schemas:
+    DateKey:
+      type: string
+      format: date
+      description: A calendar day in the mother's local time, `YYYY-MM-DD`.
+      example: '2026-11-02'
+
+    DailyWellnessCheckinData:
+      type: object
+      description: |
+        Input flow **Daily Wellness Checkin Data**, from C.1 Expecting Mother
+        via F.3.2 Capture Daily Wellness Data. The answer ids and their ranges
+        are defined once, in `HM.content.checkin`; a field that is not an
+        answer there is dropped on ingestion.
+      required: [date]
+      properties:
+        date: { $ref: '#/components/schemas/DateKey' }
+        mood: { type: integer, minimum: 1, maximum: 5 }
+        energy: { type: integer, minimum: 1, maximum: 5 }
+        sleepHours: { type: number, enum: [3.5, 5, 6.5, 8.5] }
+        sleepQuality: { type: integer, minimum: 1, maximum: 5 }
+        nausea: { type: integer, minimum: 1, maximum: 5 }
+        water: { type: number, enum: [1, 4, 7, 10] }
+        activity: { type: number, enum: [0, 15, 30, 50] }
+        symptoms:
+          type: array
+          items: { type: string }
+          description: Everyday symptom codes. Nothing acute belongs here.
+        urgent:
+          type: array
+          items: { type: string }
+          description: Codes from the high-risk criteria. These are what F.3.3.3 screens.
+        note:
+          type: string
+          description: Her own words, for her visit notes. Never screened, never sent anywhere.
+        selfHarmReported:
+          type: boolean
+          default: false
+          description: Set by the mood check when EPDS item 10 is above "Never".
+      additionalProperties: false
+
+    UserDefinedCustomInfo:
+      type: object
+      description: |
+        Input flow **User Defined Custom Info**, from C.6 External AI Service.
+        Stored verbatim under `custom` on the entry, so a value from outside
+        the boundary can never overwrite one of her answers.
+      additionalProperties: true
+
+    SummaryPrompt:
+      type: object
+      description: |
+        Control flow **Summary Prompt**, from C.1 Expecting Mother. Governs the
+        interval of the Wellness Session Record. Not stored, not consumed.
+      properties:
+        start: { $ref: '#/components/schemas/DateKey' }
+        end: { $ref: '#/components/schemas/DateKey' }
+        sinceVisit: { $ref: '#/components/schemas/DateKey' }
+
+    RecordedWellnessEntry:
+      type: object
+      description: |
+        One day of her record. Output of F.3.3.1, input to F.3.3.2, and the
+        shape held in storage.
+      required: [date, createdAt, symptoms, urgent, note]
+      properties:
+        date: { $ref: '#/components/schemas/DateKey' }
+        createdAt: { type: string, format: date-time }
+        mood: { type: integer, minimum: 1, maximum: 5 }
+        energy: { type: integer, minimum: 1, maximum: 5 }
+        sleepHours: { type: number }
+        sleepQuality: { type: integer, minimum: 1, maximum: 5 }
+        nausea: { type: integer, minimum: 1, maximum: 5 }
+        water: { type: number }
+        activity: { type: number }
+        symptoms: { type: array, items: { type: string } }
+        urgent: { type: array, items: { type: string } }
+        note: { type: string }
+        custom: { $ref: '#/components/schemas/UserDefinedCustomInfo' }
+      additionalProperties: false
+
+    ScreeningEntryPayload:
+      type: object
+      description: |
+        Internal flow **Screening Entry Payload**, F.3.3.1 → F.3.3.3. The
+        screened subset of the entry and nothing else.
+      required: [date, urgent]
+      properties:
+        date: { $ref: '#/components/schemas/DateKey' }
+        urgent: { type: array, items: { type: string } }
+        symptoms: { type: array, items: { type: string } }
+        mood:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 5
+            - type: 'null'
+        selfHarmReported: { type: boolean, default: false }
+      additionalProperties: false
+
+    HighRiskSign:
+      type: object
+      required: [value, label, category]
+      properties:
+        value: { type: string, example: selfHarm }
+        label: { type: string, example: Thoughts of harming myself }
+        category:
+          type: string
+          enum: [medical, mental]
+
+    HighRiskAlert:
+      type: object
+      description: |
+        Output flow **High-Risk Alert**, F.3.3.3 → C.1 Expecting Mother
+        (requirement WRS-1.2.1). Raised when a logged entry meets the
+        clinician-approved high-risk criteria.
+
+        It names the signs she reported and the route to help. It never names a
+        condition, a risk level or a probability.
+      required: [raisedAt, category, signs, actions]
+      properties:
+        raisedAt: { type: string, format: date-time }
+        date: { $ref: '#/components/schemas/DateKey' }
+        category:
+          type: string
+          enum: [medical, mental]
+          description: '`mental` when any matched sign is a mental-health sign, which adds 988.'
+        signs:
+          type: array
+          minItems: 1
+          items: { $ref: '#/components/schemas/HighRiskSign' }
+        actions:
+          type: array
+          minItems: 1
+          description: The route to help, in the order the product shows it (StR2.1, StR2.2).
+          items:
+            type: object
+            required: [kind, label]
+            properties:
+              kind:
+                type: string
+                enum: [provider, crisisLine, page]
+              label: { type: string }
+              href: { type: string }
+
+    UpdatedWellnessHistory:
+      type: object
+      description: |
+        Output flow **Updated Wellness History**, F.3.3.2 → C.3.4 Trend
+        Analysis Subsystem (requirement WRS-1.2.2).
+      required: [dates, dayCount, updatedAt]
+      properties:
+        dates:
+          type: array
+          items: { $ref: '#/components/schemas/DateKey' }
+          description: Every day on record, oldest first.
+        dayCount: { type: integer, minimum: 0 }
+        firstDate:
+          oneOf:
+            - $ref: '#/components/schemas/DateKey'
+            - type: 'null'
+        lastDate:
+          oneOf:
+            - $ref: '#/components/schemas/DateKey'
+            - type: 'null'
+        streak:
+          type: integer
+          minimum: 0
+          description: Consecutive days logged, counting back from today.
+        updatedAt: { type: string, format: date-time }
+
+    WellnessSessionRecord:
+      type: object
+      description: |
+        Output flow **Wellness Session Record**, F.3.3.2 → C.3.5 Wellness
+        Information Subsystem, over the interval the Summary Prompt names.
+        Also accepted as an input when C.3.5 hands it back (WRS-1.1.5).
+      required: [interval, entries]
+      properties:
+        interval:
+          type: object
+          required: [start, end]
+          properties:
+            start: { $ref: '#/components/schemas/DateKey' }
+            end: { $ref: '#/components/schemas/DateKey' }
+        entries:
+          type: array
+          items: { $ref: '#/components/schemas/RecordedWellnessEntry' }
+          description: The entries in the interval, oldest first.
+        questions:
+          type: array
+          description: '"Questions I want to ask", carried both ways.'
+          items:
+            type: object
+            required: [id]
+            properties:
+              id: { type: string }
+              text: { type: string }
+              createdAt: { type: string, format: date-time }
+              asked: { type: boolean }
+        generatedAt: { type: string, format: date-time }
+
+    Problem:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string }
+        detail: { type: string }
+        flow:
+          type: string
+          description: The IDEF0 flow that did not validate.
